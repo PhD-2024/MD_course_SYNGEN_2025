@@ -31,7 +31,7 @@ Here is a quick overview over important bash commands
 | `grep string files`| searches for string in files| 
 | `man command`| opens the manual page for the command - RTFM (Read the very fine manual... |
 | `ssh user@machine` | connects to machine via ssh for your username "user" on the remote machine | 
-| `echo` | prints to stout | 
+| `echo` | prints to stout: e.g. `echo foo bar`| 
 
 
 
@@ -61,9 +61,50 @@ files=$(ls *gro)
 for file in $files
 do
 
-\#what you do
+#what you do actually want to do 
+echo $file
 done
 ```
+4) Variable definitions are as simple as e.g. `myvariable=5`. It can be called then by its name adding a $ before. `$myvariable`.
+
+5) Comments: \# is a comment symbol and everything behind it will not be executed.
+
+6) Simple addition ```newvalue=$(($oldvalue + $newvalue))
+
+7) Logic for comparison
+| Operator / Command | Meaning / Example |
+|---|---|
+| `-gt` | Numeric greater than. Example: `[ "$a" -gt "$b" ]` |
+| `-lt` | Numeric less than. Example: `[ "$a" -lt "$b" ]` |
+| `-eq` | Numeric equal. Example: `[ "$a" -eq "$b" ]` |
+| `-ne` | Numeric not equal. Example: `[ "$a" -ne "$b" ]` |
+| `-ge` | Numeric greater than or equal. Example: `[ "$a" -ge "$b" ]` |
+| `-le` | Numeric less than or equal. Example: `[ "$a" -le "$b" ]` |
+| `=` | String equal (POSIX `[` ). Example: `[ "$str1" = "$str2" ]` |
+| `!=` | String not equal. Example: `[ "$str1" != "$str2" ]` |
+| `<` / `>` | String less/greater (lexicographic) in `[[ ]]` or use `\<'`/`\>'` in `[ ]`. Example: `[[ "$a" < "$b" ]]` |
+| `-z` | String is empty. Example: `[ -z "$var" ]` |
+| `-n` | String is not empty. Example: `[ -n "$var" ]` |
+| `!` | Logical NOT. Example: `if ! [ -f file ]; then ...` |
+| `&&` | Logical AND between commands/tests. Example: `[ "$a" -gt 0 ] && echo "pos"` |
+| `||` | Logical OR between commands/tests. Example: `[ -f f ] || echo "missing"` |
+| `-e` | File exists (any type). Example: `[ -e path ]` |
+| `-f` | Regular file exists. Example: `[ -f file ]` |
+| `-d` | Directory exists. Example: `[ -d dir ]` |
+| `-r` | File is readable. Example: `[ -r file ]` |
+| `-w` | File is writable. Example: `[ -w file ]` |
+| `-x` | File is executable. Example: `[ -x script.sh ]` |
+| `-s` | File exists and has non-zero size. Example: `[ -s file ]` |
+
+Notes:
+- Use `[ ... ]` (POSIX) or `[[ ... ]]` (bash). `[[ ]]` is more flexible (allows `==`, `<`, `>` without escaping and pattern matching).
+- Always quote variables in tests (e.g. `[ "$a" = "$b" ]`) to avoid word-splitting and errors with empty values.
+- Numeric comparisons require the `-` operators (`-eq`, `-gt`, …). Using `=`/`!=` compares strings, not numbers.
+- For floating-point comparisons use external tools (e.g. `awk`, `bc`) because `test`/`[` only handle integers.
+- Combine tests with `&&`, `||`, or use compound tests: `if [ -f a ] && [ -w a ]; then … fi`.
+- Use `(( ))` for arithmetic expressions: `if (( a > b )); then … fi` (no `$` needed inside).
+- Example: `if (( a > b && b >= 0 )); then echo "ok"; fi`
+- Example combining file checks: `if [ -f file ] && [ -s file ]; then echo "exists and not empty"; fi`
 
 ## Setting up a Simulation for the combined 1J46.pdb
 
