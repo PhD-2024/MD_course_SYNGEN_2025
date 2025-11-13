@@ -32,7 +32,8 @@ Here is a quick overview over important bash commands
 | `man command`| opens the manual page for the command - RTFM (Read the very fine manual... |
 | `ssh user@machine` | connects to machine via ssh for your username "user" on the remote machine | 
 | `echo` | prints to stout: e.g. `echo foo bar`| 
-
+| `chmod` | Change file permissions (mode). Examples: `chmod 755 file` or `chmod +x script.sh` |
+| `chown` | Change file owner and group. Example: `chown user:group file` |
 
 
 1) (Bash) Scripts are essentially nothing essentially nothing more storing commands in a text file so you can reuse them (also great to have reproducability - no arbitray behavior due to typos-)
@@ -72,6 +73,7 @@ done
 6) Simple addition `newvalue=$(($oldvalue + $newvalue))`
 
 7) Logic for comparison
+
 | Operator / Command | Meaning / Example |
 |---|---|
 | `-gt` | Numeric greater than. Example: `[ "$a" -gt "$b" ]` |
@@ -88,15 +90,15 @@ done
 | `!` | Logical NOT. Example: `if ! [ -f file ]; then ...` |
 | `&&` | Logical AND between commands/tests. Example: `[ "$a" -gt 0 ] && echo "pos"` |
 | `\|\|` | Logical OR between commands/tests. Example: `[ -f f ] \|\| echo "missing"` |
-| `-e` | File exists (any type). Example: `[ -e path ]` |
+ | `-e` | File exists (any type). Example: `[ -e path ]` |
 | `-f` | Regular file exists. Example: `[ -f file ]` |
 | `-d` | Directory exists. Example: `[ -d dir ]` |
 | `-r` | File is readable. Example: `[ -r file ]` |
 | `-w` | File is writable. Example: `[ -w file ]` |
 | `-x` | File is executable. Example: `[ -x script.sh ]` |
-| `-s` | File exists and has non-zero size. Example: `[ -s file ]` |
+| `-s` | File exists and has non-zero size. Example: `[ -s file ]` | 
 
-<!-- Notes:
+Notes:
 - Use `[ ... ]` (POSIX) or `[[ ... ]]` (bash). `[[ ]]` is more flexible (allows `==`, `<`, `>` without escaping and pattern matching).
 - Always quote variables in tests (e.g. `[ "$a" = "$b" ]`) to avoid word-splitting and errors with empty values.
 - Numeric comparisons require the `-` operators (`-eq`, `-gt`, …). Using `=`/`!=` compares strings, not numbers.
@@ -104,7 +106,21 @@ done
 - Combine tests with `&&`, `||`, or use compound tests: `if [ -f a ] && [ -w a ]; then … fi`.
 - Use `(( ))` for arithmetic expressions: `if (( a > b )); then … fi` (no `$` needed inside).
 - Example: `if (( a > b && b >= 0 )); then echo "ok"; fi`
-- Example combining file checks: `if [ -f file ] && [ -s file ]; then echo "exists and not empty"; fi` -->
+- Example combining file checks: `if [ -f file ] && [ -s file ]; then echo "exists and not empty"; fi`
+8) permissions:
+you may somethimes need to change permissions. To do this you can use chmod to change permissions for user, group and the rest. Using a common numbering scheme this means, e.g. `chmod 755` gives you all permissions, whereas everyone else may read and run it but not modify. (common for scripts)
+
+| Permission | Number | chmod shorthand |
+|---|---:|---|
+| `---` (no permissions) | 0 | `---` |
+| `--x` (execute only) | 1 | `--x` |
+| `-w-` (write only) | 2 | `-w-` |
+| `-wx` (write & execute) | 3 | `-wx` |
+| `r--` (read only) | 4 | `r--` |
+| `r-x` (read & execute) | 5 | `r-x` |
+| `rw-` (read & write) | 6 | `rw-` |
+| `rwx` (read, write & execute) | 7 | `rwx` |
+
 
 ## Setting up a Simulation for the combined 1J46.pdb
 
