@@ -1,6 +1,6 @@
 # MD_course
 
-# Linux introduction 
+# Linux/Bash introduction 
 
 When working on a cluster there may not be a GUI. Also on your own
 machine it may be a lot more efficient to use a terminal.
@@ -36,7 +36,8 @@ Here is a quick overview over important bash commands
 | `chown` | Change file owner and group. Example: `chown user:group file` |
 
 
-1) (Bash) Scripts are essentially nothing essentially nothing more storing commands in a text file so you can reuse them (also great to have reproducability - no arbitray behavior due to typos-)
+1) (Bash) Scripts are essentially nothing essentially nothing more storing commands in a text file so you can reuse them (also great to have reproducability - no arbitray behavior due to typos-). You usually start them with the so called shebang `#!/bin/bash` which tells the computer with which interpreter to execute it - here bash. `#!/bin/python3`would be a python script for example. You can of course completely forgo it and manually call the `bash`command in the shell.
+
 2) Wildcards/placeholders `*` any chars, `?` one char.
 3) Redirections `>` redirects stout to a new file.
 `>>` appends to file.
