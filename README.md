@@ -87,7 +87,7 @@ done
 | `-n` | String is not empty. Example: `[ -n "$var" ]` |
 | `!` | Logical NOT. Example: `if ! [ -f file ]; then ...` |
 | `&&` | Logical AND between commands/tests. Example: `[ "$a" -gt 0 ] && echo "pos"` |
-| `||` | Logical OR between commands/tests. Example: `[ -f f ] || echo "missing"` |
+| `\|\|` | Logical OR between commands/tests. Example: `[ -f f ] \|\| echo "missing"` |
 | `-e` | File exists (any type). Example: `[ -e path ]` |
 | `-f` | Regular file exists. Example: `[ -f file ]` |
 | `-d` | Directory exists. Example: `[ -d dir ]` |
