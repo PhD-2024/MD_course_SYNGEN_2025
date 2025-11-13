@@ -51,9 +51,15 @@ for i in {1..5}; do
   echo "Iteration $i"
 done
 ```
-While condition fullfilled (file exists)
 
-TODO add 
+
+```
+while true; do
+    sleep 5
+    # do something every 5 seconds, for example:
+    echo "Still running - $(date)"
+done
+```
 
 find all .gro files and do something with them
 
