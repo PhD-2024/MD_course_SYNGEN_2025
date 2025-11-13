@@ -69,7 +69,7 @@ done
 
 5) Comments: \# is a comment symbol and everything behind it will not be executed.
 
-6) Simple addition ```newvalue=$(($oldvalue + $newvalue))```
+6) Simple addition `newvalue=$(($oldvalue + $newvalue))`
 
 7) Logic for comparison
 | Operator / Command | Meaning / Example |
