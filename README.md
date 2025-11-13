@@ -27,7 +27,7 @@ Here is a quick overview over important bash commands
 | `touch`| creates an empty file (or updates times) | 
 | `scp` | Secure copy files between hosts (`scp file user@host:/path`) |
 | `pwd` | Print working directory |
-| ```sed "s|to_substitute|replaced_by|g" ``` | Replace all occurrences of `to_substitute` with `replaced_by` using `sed` |
+| `sed "s\|to_substitute\|replaced_by\|g" ` | Replace all occurrences of `to_substitute` with `replaced_by` using `sed` |
 | `grep string files`| searches for string in files| 
 | `man command`| opens the manual page for the command - RTFM (Read the very fine manual... |
 | `ssh user@machine` | connects to machine via ssh for your username "user" on the remote machine | 
