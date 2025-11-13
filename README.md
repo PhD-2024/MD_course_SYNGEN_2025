@@ -31,17 +31,40 @@ Here is a quick overview over important bash commands
 | `grep string files`| searches for string in files| 
 | `man command`| opens the manual page for the command - RTFM (Read the very fine manual... |
 | `ssh user@machine` | connects to machine via ssh for your username "user" on the remote machine | 
+| `echo` | prints to stout | 
 
 
 
 1) (Bash) Scripts are essentially nothing essentially nothing more storing commands in a text file so you can reuse them (also great to have reproducability - no arbitray behavior due to typos-)
-2) With loops you can do a lot
+2) Wildcards/placeholders `*` any chars, `?` one char.
+3) Redirections `>` redirects stout to a new file.
+`>>` appends to file.
+`&>` redirects stout and sterr to a file.
+
+3) With loops you can do a lot some examples
+
+For loop over iterations:
 
 ```
 for i in {1..5}; do
   echo "Iteration $i"
 done
 ```
+While condition fullfilled (file exists)
+
+TODO add 
+
+find all .gro files and do something with them
+
+```
+files=$(ls *gro)
+for file in $files
+do
+
+\#what you do
+done
+```
+
 ## Setting up a Simulation for the combined 1J46.pdb
 
 ## pdb preparation
