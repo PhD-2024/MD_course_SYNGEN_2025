@@ -96,7 +96,7 @@ done
 | `-x` | File is executable. Example: `[ -x script.sh ]` |
 | `-s` | File exists and has non-zero size. Example: `[ -s file ]` |
 
-Notes:
+<!-- Notes:
 - Use `[ ... ]` (POSIX) or `[[ ... ]]` (bash). `[[ ]]` is more flexible (allows `==`, `<`, `>` without escaping and pattern matching).
 - Always quote variables in tests (e.g. `[ "$a" = "$b" ]`) to avoid word-splitting and errors with empty values.
 - Numeric comparisons require the `-` operators (`-eq`, `-gt`, …). Using `=`/`!=` compares strings, not numbers.
@@ -104,7 +104,7 @@ Notes:
 - Combine tests with `&&`, `||`, or use compound tests: `if [ -f a ] && [ -w a ]; then … fi`.
 - Use `(( ))` for arithmetic expressions: `if (( a > b )); then … fi` (no `$` needed inside).
 - Example: `if (( a > b && b >= 0 )); then echo "ok"; fi`
-- Example combining file checks: `if [ -f file ] && [ -s file ]; then echo "exists and not empty"; fi`
+- Example combining file checks: `if [ -f file ] && [ -s file ]; then echo "exists and not empty"; fi` -->
 
 ## Setting up a Simulation for the combined 1J46.pdb
 
