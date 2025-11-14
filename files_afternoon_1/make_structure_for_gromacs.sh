@@ -68,9 +68,9 @@ tail -n $(( $np -2 )) protein_part/protein.gro >> full_system.gro
 
 #check  how large the structure is and modify the boxsize, so that the largest distance is AT LEAST half the box dimension
 # why is that necessary?
-topfiles="full_system.gro helix_system.gro"
+grofiles="full_system.gro helix_system.gro"
 
-for i in $topfiles
+for i in $grofiles
 do
 	what=$(tail -n1  $i)
 	sed -i "s|$what|11.0 11.0 11.0|g" $i 
@@ -80,5 +80,39 @@ done
 #essentially a top file has the atomtype definitions at the beginning and then uses all of those for the moleculefiles
 #we can use the  generated topologies and make a shared topfile for all
 
+topfiles="helix_part/helix_topol_pt1.top helix_part/helix_topol_pt2.top protein_part/protein_topol.top"
+
 cat "./amber99bsc1.ff/forcefield.itp" > system.top
-echo '#include "
+
+for i in $topfiles
+do
+itp=$(sed "s|.top|.itp|g" <<< $i)
+python3 top_to_itp.py --file $i > $itp
+echo "#include \"$itp\" " >> system.top
+done
+
+echo """; Include water topology
+#include "./amber99bsc1.ff/tip3p.itp"
+
+#ifdef POSRES_WATER
+; Position restraint for each water oxygen
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
+; Include topology for ions
+#include "./amber99bsc1.ff/ions.itp"
+
+[ system ]
+; Name
+Protein
+
+[ molecules ]
+; Compound        #mols
+Protein_chain_A     1
+DNA_chain_B         1
+DNA_chain_A         1
+""" >> system.top
+
+
