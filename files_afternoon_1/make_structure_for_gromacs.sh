@@ -82,7 +82,7 @@ done
 
 topfiles="helix_part/helix_topol_pt1.top helix_part/helix_topol_pt2.top protein_part/protein_topol.top"
 
-cat "./amber99bsc1.ff/forcefield.itp" > system.top
+sed 's|include "|include "./amber99bsc1.ff/|g' ./amber99bsc1.ff/forcefield.itp > system.top
 
 for i in $topfiles
 do
@@ -106,13 +106,19 @@ echo """; Include water topology
 
 [ system ]
 ; Name
-Protein
+Protein and DNA strands
 
 [ molecules ]
 ; Compound        #mols
 Protein_chain_A     1
 DNA_chain_B         1
-DNA_chain_A         1
+DNA_chain_C         1
 """ >> system.top
 
 
+cp system.top full_system.top
+sed "s|Protein_chain_A     1|Protein_chain_A     0|g" full_system.top > DNA_system.top
+sed "s|DNA_chain_B         1|DNA_chain_B         0|g" full_system.top > protein_system.top
+sed -i  "s|DNA_chain_C         1|DNA_chain_C         0|g"  protein_system.top
+
+gmx solvate -cp full_system.gro -o solvated_full_system.gro -p  full_system.top 
