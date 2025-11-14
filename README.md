@@ -3,7 +3,7 @@
 The following is an overview for the practical side of the course.
 You will find both information, files and instuctions here.
 
-## Linux/Bash introduction 
+## Linux/Bash introduction (day1)
 
 When working on a cluster there may not be a GUI. Also on your own
 machine it may be a lot more efficient to use a terminal.
@@ -176,9 +176,9 @@ First get the `1J46.pdb` file from the protein database or our course.
 
 You can quickly have a look both at the visual structure (using `vmd 1J46.pdb`) and the actual text file (e.g. using `more`, `less` or an editor like `vi`, `vim` or `nano`). 
 
-# TODO HERE ACTUAL INSTRUCTIONS 
+### TODO HERE ACTUAL INSTRUCTIONS 
 
-# so far only notes for myself
+### so far only notes for myself
 
 `make_structure_for_gromacs.sh `so far generates the topology (CHARGES NOT YET SET TO ZERO- DEPENDING ON WHAT WE WANT TO SIMULATE EITHER SIMULATE AT PH, 
 chargestate etc)
@@ -188,3 +188,6 @@ todo: once finished make this as instructions, so the students do this in part b
 
 `run_mds.sh`is a script that they will have to do themselves- not for the course but for our usage
 
+## Course graining (day 2) 
+
+## Data evaluation (day 3)
