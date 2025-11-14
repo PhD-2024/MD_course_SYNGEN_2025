@@ -1,5 +1,5 @@
 steps="steep nvt npt_ber npt"
-startgro="full_system.gro"
+startgro="solvated_full_system.gro"
 for part in $steps
 do
 gmx grompp -f $part.mdp -c $startgro -p  full_system.top -o $part.tpr
