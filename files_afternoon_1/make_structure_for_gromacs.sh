@@ -92,7 +92,7 @@ echo "#include \"$itp\" " >> system.top
 done
 
 echo """; Include water topology
-#include "./amber99bsc1.ff/tip3p.itp"
+#include \"./amber99bsc1.ff/tip3p.itp\"
 
 #ifdef POSRES_WATER
 ; Position restraint for each water oxygen
@@ -102,7 +102,7 @@ echo """; Include water topology
 #endif
 
 ; Include topology for ions
-#include "./amber99bsc1.ff/ions.itp"
+#include \"./amber99bsc1.ff/ions.itp\"
 
 [ system ]
 ; Name
@@ -110,9 +110,9 @@ Protein and DNA strands
 
 [ molecules ]
 ; Compound        #mols
-Protein_chain_A     1
 DNA_chain_B         1
 DNA_chain_C         1
+Protein_chain_A     1 ; the order has to be the same as in the gro file!
 """ >> system.top
 
 
