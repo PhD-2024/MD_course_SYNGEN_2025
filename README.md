@@ -1,6 +1,9 @@
 # MD_course
 
-# Linux/Bash introduction 
+The following is an overview for the practical side of the course.
+You will find both information, files and instuctions here.
+
+## Linux/Bash introduction 
 
 When working on a cluster there may not be a GUI. Also on your own
 machine it may be a lot more efficient to use a terminal.
@@ -131,8 +134,57 @@ you may somethimes need to change permissions. To do this you can use chmod to c
 
 ## Setting up a Simulation for the combined 1J46.pdb
 
-## pdb preparation
+An MD simulation in GROMACS will always need 3 things
+  1) coordinates, which tell the program where is what (usually a `.gro` file)
+  2) a "topology" (yes it is defined different in Maths...). This contains the actual forcefield that tells 
+  the program how which molecule interacts with all the others and with itself. This can be nicely separated out in a pure `.itp` 
+  file for conciseness and to transport it over.
+  Furthermore it wants to know (at the beginning) how the atomtypes are defined and how to deal with LR-interactions in the intra-molecular part.
+  Also at the end you specify how many of which kind of molecules (in the order of the geometry `.gro`) is included.
+  All this makes a `.top`file.
+
+  3) Instructions what you expect the program to actually do with those things. 
+  (Energy minimization/ MD run, how to deal with temparature (thermostat parameters), pressure (barostat parameters), constraints,
+  how do describe LR-interactions, free energy dH/dlambda calculations,...  )
+
+  Once you have all those, you can send the instructions to the "preprocessor" 
+  ``` gmx grompp -f instuctions.mdp -p topology_file.top -c starting_coordinates.gro -o name_how_runfile_should_be_called.tpr```
+
+  This then checks everything for correctness and yields a `.tpr`file.
+
+  This you can then use for a simulation. To simplify the naming conventions and to prevent you from typing differnt stuff for
+  energy, trajectory, log, etc. files you can use the `deffnm` option here, which uses the same name for everything and just changes the file endings.
+  e.g. this starts a (verbose) run with the name chosen above. (HINT DO NOT WRITE .tpr here, that conflicts with other file endings.)
+   ``` gmx mdrun -v -deffnm  name_how_runfile_should_be_called```
+
+  The following are some common GROMACS mdrun output files
+
+  | File ending | Description |
+  |---|---|
+  | `.gro` | Final finished output geometry: coordinates (and box vectors) in GROMACS `.gro` format, used as the new starting structure. |
+  | `.xtc` | Compressed trajectory (coordinates only, reduced precision) for visualization and analysis; small file size. |
+  | `.trr` | Full-precision trajectory containing coordinates, velocities, forces; much larger. |
+  | `.edr` | Binary energy file with time series of energies and thermodynamic observables; read with `gmx energy -f `. |
+  | `.log` | Text log of the mdrun run: settings, progress, performance summary, warnings and errors. |
+  | `.cpt` | Checkpoint file for restarting runs: binary snapshot of simulation state (step, random seeds, integrator state); use with `-cpi` to continue. |
+
+  
+  
+  ### pdb preparation
 
 First get the `1J46.pdb` file from the protein database or our course.
 
-You can quickly have a look both at the visual structure (using `vmd 1J46.pdb`) and the actual text file (e.g. using `more`, `less` or an editor like `vi`, `vim` or `nano`)
+You can quickly have a look both at the visual structure (using `vmd 1J46.pdb`) and the actual text file (e.g. using `more`, `less` or an editor like `vi`, `vim` or `nano`). 
+
+# TODO HERE ACTUAL INSTRUCTIONS 
+
+# so far only notes for myself
+
+`make_structure_for_gromacs.sh `so far generates the topology (CHARGES NOT YET SET TO ZERO- DEPENDING ON WHAT WE WANT TO SIMULATE EITHER SIMULATE AT PH, 
+chargestate etc)
+
+todo: once finished make this as instructions, so the students do this in part by line and others they can execute
+
+
+`run_mds.sh`is a script that they will have to do themselves- not for the course but for our usage
+
