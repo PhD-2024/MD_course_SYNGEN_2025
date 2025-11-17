@@ -232,7 +232,62 @@ because you can just set the number at the very bottom.
 
 To obtain this this make a new file `system.top` (or however you want to call it).
 To have the ff paramters you should start with the header from `./amber99bsc1.ff/forcefield.itp.
-If you have it in a subfolder, then you should of course change the import to 
+If you have it in a subfolder, then you should of course change the import to the corresponding subfolder of course.
+
+First use the pdb2gmx generated topologies and run `python3 top_to_itp.py --file old.itp > new.itp`.
+The corresponding `new.itp` files have been cleaned of everything that is a top but not strictly a molecule-specific `.itp`
+In this file you want to import the corresponding itps generated previously. 
+
+Now you still need to add the following, to include the water model, the ion-interactions and possible position restraints.
+In the `[ system ]` section you can give your topology any name you want. It has no influence on the actual simulation.
+Opposed to this the `[ molecules ]` section is extremely important. Here you write how many of which of your
+molecules are within the geometry. Be careful to add the molecules in the correct order.
+You can also have multiple of the same residues, but they NEED to be in the very same order as in your geometry.
+e.g. 
+```
+SOl 100 
+PRO 1 
+SOL 150 
+UNL 2 
+SOL 1
+```
+opposed to 
+```
+PRO 1 
+UNL2 
+SOL 251
+```  
+
+``` 
+; Include water topology
+#include "./amber99bsc1.ff/tip3p.itp"
+
+#include "YOUR RESPECTIVE NEW .itp file1"
+
+#include "YOUR RESPECTIVE NEW .itp file2"
+
+#include "YOUR RESPECTIVE NEW .itp file3"
+
+#ifdef POSRES_WATER
+; Position restraint for each water oxygen
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
+; Include topology for ions
+#include \"./amber99bsc1.ff/ions.itp\"
+
+[ system ]
+; Name
+Protein and DNA strands
+
+[ molecules ]
+; Compound        #mols
+DNA_chain_B         1
+DNA_chain_C         1
+Protein_chain_A     1 ; the order has to be the same as in the gro file!
+```
 
 
 
