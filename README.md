@@ -176,6 +176,19 @@ First get the `1J46.pdb` file from the protein database or our course.
 
 You can quickly have a look both at the visual structure (using `vmd 1J46.pdb`) and the actual text file (e.g. using `more`, `less` or an editor like `vi`, `vim` or `nano`). 
 
+Think of what protonation state do you expect at neutral conditions? (pH=7.2)  What are the amino-acid pKs Values for this? - Does this correspond to your assumptions?
+
+You can use `https://server.poissonboltzmann.org/pdb2pqr` to get an automated generation of charge states of each individual pH for the amino acids. 
+Still you have to be careful and you definitely should check its results.
+
+First you want to split the (mixed) pdb file, which contains 2 DNA parts and a protein part.
+For this you only need the respective `ATOM` parts in their individual files. 
+To speed this up you can use the privided `split_pdb.py` script. This is a very simple python script that iterates over the lines and separates at the separator.
+Alternatively you can of course also use a texteditor.
+
+You should be left with 3 `.pdb` files. (Named `part_0.pdb`, `part_1.pdb`, `part_2.pdb` if you used the script to do this) 
+
+
 ### TODO HERE ACTUAL INSTRUCTIONS 
 
 ### so far only notes for myself
