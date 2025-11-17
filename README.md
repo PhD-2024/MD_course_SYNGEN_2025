@@ -190,7 +190,7 @@ You should be left with 3 `.pdb` files. (Named `part_0.pdb`, `part_1.pdb`, `part
 
 Next you want to obtain both a geometry and a "topology" (molecule specific forcefield with the ff-parameters of your chosen force field).
 
-#### Force field paramterization
+#### Force field paramterization and geometry files for the system
 For this part you want to use `gmx pdb2gmx`.
 This gromacs program allows you to write a topology based on a chosen forcefield and a geometry based on a provided pdb.
 
@@ -217,7 +217,25 @@ echo "1" | gmx pdb2gmx -f part_0.pdb -ff amber99bsc1 -ignh -o  helix_part/helix_
 echo "1" | gmx pdb2gmx -f part_1.pdb -ff amber99bsc1 -ignh -o  helix_part/helix_pt2.gro -p helix_part/helix_topol_pt2.top -i helix_part/posre_h_pt2.itp
 echo "1" | gmx pdb2gmx -f part_2_copy.pdb -ff amber99bsc1 -ignh -o protein_part/protein.gro -p protein_part/protein_topol.top -i protein_part/posre.itp
 ```
- 
+
+You see that the `.gro` files still contain the same coordinates as before. That makes it simple to recombine them into files for your simulation. 
+For that just copy the coordinates to a new .gro File. If you instead use `gmx insert molecules` this will put them randomly into the box without preserving their coordinates.
+
+For our simulation we explicitly want to preserve the helix. It would not do to have two separated strands nanometers from one another!
+To make the combined `.gro` you need to also set the number (line 0) equal to the actual atom number in the file.
+(It is possible to renumber the atoms starting from 1 to end with `gmx genconf`but not necessary.)
+
+So next make a `.gro` File consisting of the whole helix (or the helix and the protein).
+
+For the corresponding topology you also want to combine all systems into 1 file. You can use this irrespectively how many of strand1, strand2 and protein residues it contains, 
+because you can just set the number at the very bottom.
+
+To obtain this this make a new file `system.top` (or however you want to call it).
+To have the ff paramters you should start with the header from `./amber99bsc1.ff/forcefield.itp.
+If you have it in a subfolder, then you should of course change the import to 
+
+
+
 ### TODO HERE ACTUAL INSTRUCTIONS 
 
 ### so far only notes for myself
