@@ -186,9 +186,38 @@ For this you only need the respective `ATOM` parts in their individual files.
 To speed this up you can use the privided `split_pdb.py` script. This is a very simple python script that iterates over the lines and separates at the separator.
 Alternatively you can of course also use a texteditor.
 
-You should be left with 3 `.pdb` files. (Named `part_0.pdb`, `part_1.pdb`, `part_2.pdb` if you used the script to do this) 
+You should be left with 3 `.pdb` files. (Named `part_0.pdb`, `part_1.pdb`, `part_2.pdb` if you used the script to do this.) 
+
+Next you want to obtain both a geometry and a "topology" (molecule specific forcefield with the ff-parameters of your chosen force field).
+
+#### Force field paramterization
+For this part you want to use `gmx pdb2gmx`.
+This gromacs program allows you to write a topology based on a chosen forcefield and a geometry based on a provided pdb.
+
+For this make shoure you have the `amber99bsc1`  folder in your current working director or to know the full path to where you put it.
+Now make 3 preliminary topologies and geometries based on your pdb inputs.
+It is recommended to use separated folders.
+Usage of `gmx pdb2gmx` is
+``` 
+gmx pdb2gmx -f pdbfile -ff path/to/forcefield -o output_for_geometry.gro -i output_for_topology.itp
+```
 
 
+Therefore you can use 
+```
+ gmx pdb2gmx -f part_0.pdb -ff amber99bsc1 -ignh -o  helix_part/helix_pt1.gro -p helix_part/helix_topol_pt1.top -i helix_part/posre_h_pt1.itp
+```
+ and choose the option for the tip3p water model.
+
+ If you need to do this multiple times you can also echo the selection of your water model. 
+ e.g. assuming 1 corresponds to tip3p:
+
+```
+echo "1" | gmx pdb2gmx -f part_0.pdb -ff amber99bsc1 -ignh -o  helix_part/helix_pt1.gro -p helix_part/helix_topol_pt1.top -i helix_part/posre_h_pt1.itp
+echo "1" | gmx pdb2gmx -f part_1.pdb -ff amber99bsc1 -ignh -o  helix_part/helix_pt2.gro -p helix_part/helix_topol_pt2.top -i helix_part/posre_h_pt2.itp
+echo "1" | gmx pdb2gmx -f part_2_copy.pdb -ff amber99bsc1 -ignh -o protein_part/protein.gro -p protein_part/protein_topol.top -i protein_part/posre.itp
+```
+ 
 ### TODO HERE ACTUAL INSTRUCTIONS 
 
 ### so far only notes for myself
