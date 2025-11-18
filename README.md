@@ -2,6 +2,14 @@
 
 The following is an overview for the practical side of the course.
 You will find both information, files and instuctions here.
+If you prefer to read a pdf instead of markdown, simply use 
+
+`pandoc README.md -f markdown+smart -s -o README_pandoc_converted.pdf` 
+
+alternatively.
+
+`pandoc README.md -s -o README_pandoc_converted.pdf --pdf-engine=lualatex -V geometry:margin=1in -V fontsize=10pt --include-in-header=pandoc_header.tex`
+if you get split over linewidths. 
 
 ## DAY 1
 ### Linux/Bash introduction 
@@ -543,7 +551,7 @@ More advanced options can (like everything) be found in the documentation. **A**
 
 ### Displaying multiple frames of the trajectory without diffusion
 
-Select the DC basepairs and then use `gmx trjconv` with the option `fit rot+trains` to obtain a trajectory where those groups are fitted on top of another (removing its diffusion and rotation.)
+Select the DC basepairs and then use `gmx trjconv` with the option `-fit rot+trains` to obtain a trajectory where those groups are fitted on top of another (removing its diffusion and rotation.)
 This allows you to display multiple frames with vmd (change `now` to `startframe:endframe`) for a part of the trajectory and use a slight smoothing factor in the "Trajectory" section of the Graphical Representations window of vmd. This directly shows you how flexible different parts of your molecule are (if your fitted selection is rigid - e.g. a protein backbone.)
 
 If your selection is broken over periodic boundary conditions during the trajectory, you should first center it into the box.
