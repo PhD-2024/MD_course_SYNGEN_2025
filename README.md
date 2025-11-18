@@ -470,9 +470,13 @@ indexS1 indexS2
 
 We will use such a ndx file to make our visualisation of the final trajectory easier on our eyes.
 
+### Displaying multiple frames of the trajectory without diffusion
 
 Select the DC basepairs and then use `gmx trjconv` with the option `fit rot+trains` to obtain a trajectory where those groups are fitted on top of another (removing its diffusion and rotation.)
 This allows you to display multiple frames with vmd (change `now` to `startframe:endframe`) for a part of the trajectory and use a slight smoothing factor in the "Trajectory" section of the Graphical Representations window of vmd. This directly shows you how flexible different parts of your molecule are (if your fitted selection is rigid - e.g. a protein backbone.)
+
+If your selection is broken over periodic boundary conditions during the trajectory, you should first center it into the box.
+This is also something that you can do with the `gmx trjconv` options. The simplest way for this is ususally `-pbc cluster` and `-center`.  
 
 
 ### NOTES TO MYSELF 
