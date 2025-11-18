@@ -388,10 +388,57 @@ Therefore, we try to prepare our system.
 (if you experience periodic fluctuations of the boxsize in your simulations in the future this may be the cause, for this check a fourier transform as a test.)
 
 Now do an energy-minimization, and the equilibration steps and then run the simulation. 
+For this (as mentioned above) first run `gmx grompp` and then `gmx mdrun`
 
+The final production you will not do on your local machine.
+
+For this we will now discuss how to run your systems on the cluster.
+
+Alternatively --
 For analysis you may be given a finished system.
 
+#### Connecting to another machine via ssh
 
+Normally you are your user at your local machine. Now you want to run this on another one.
+
+You will connect to  int-nano.int.kit.edu using the username username by using
+
+```
+ssh -Y username@int-nano.int.kit.edu
+
+```
+
+There you should see your folders. Make a new folder for this course and if you need to remove/move stuff in this course consult your advisors. 
+This is a group machine and we do not want you to accidentally delete data of other users.
+
+you can then copy your inputs from the course pc via `scp` (secure copy) or `rsync`.
+
+Those work by 
+```
+scp target destination
+
+```
+or 
+
+```
+rsync target destination
+
+```
+for copying whole folders it is recommendet do use  a dry-run first and then run the command again without this option if it looks correct.
+
+
+```
+rsync -a --progress --verbose --dry-run target destination
+
+```
+Normally you submit scripts on a cluster using a queuing system. 
+For the course however we have blocked a node, so you can directly run here.
+
+
+Connect (via ssh) from the login node to the reserved node on the cluster (`ssh user@reserved_machine`) - you can run your gmx run there. For this you should specify how many resources you can use with the assistants.
+
+(This will change the `mdrun options` slightly, e.g. using `-nt`, `-pin` etc.)
+Before running the jobs here for the first time please get an ok of the assistants.
 
  
 
