@@ -334,11 +334,11 @@ Now look at your system again using vmd.
 The Main window is the actually controlling window.
 The Graphical Representation controls how stuff is represented (it can also be closed and reopened from the Main without any issues.)
 
-![VMD screenshot](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-29.png>)
+![Main Window](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-29.png>)
 
-![Bildschirmfoto vom 2025-11-18 09-18-33](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-33.png>)
+![Graphical Representations Window](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-33.png>)
 
-![Bildschirmfoto vom 2025-11-18 09-18-39](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-39.png>)
+![OpenGL Display](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-39.png>)
 
 Unless other settings have been saved to the `.vmdrc` file, the default will be to show everything (connected by lines).
 If you need to load data into your molecules you could do so via the "Main" window (you will need that later.)
@@ -356,18 +356,18 @@ Further HINTS:
 
 
 <!-- ![Bildschirmfoto vom 2025-11-18 09-26-10](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-10.png>) -->
-![Bildschirmfoto vom 2025-11-18 09-26-15](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-15.png>)
+![Selection only](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-15.png>)
 <!-- ![Bildschirmfoto vom 2025-11-18 09-26-46](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-46.png>) -->
 
 As you see the display stayed the same. This is inconvenient: 
 By using Display - Reset View in the Main window you can easily center on your desired fragments.
-![Bildschirmfoto vom 2025-11-18 09-27-03](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-27-03.png>)
-![Bildschirmfoto vom 2025-11-18 09-27-40](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-27-40.png>)
+![Reset view](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-27-03.png>)
+![Selection with reset view](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-27-40.png>)
 
 Your Drawing Method is still lines, you can change it in the Graphical Representations window. This may help for visualization purposes or also to render publication quality pictures. (We will not talk about this now. If there is time at the end of the course we can do this.).
 
-![Bildschirmfoto vom 2025-11-18 09-29-29](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-29-29.png>)
-![Bildschirmfoto vom 2025-11-18 09-30-06](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-30-06.png>)
+![Example chaged Drawing Method 1](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-29-29.png>)
+![Example chaged Drawing Method 2](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-30-06.png>)
 
 You can also use the `Coloring Method` to e.g. manually color selections, color residues differently,...
 
