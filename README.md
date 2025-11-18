@@ -448,7 +448,12 @@ Index files allow for a more in-depth selection for later analysis or other oper
 
 The simples way to generate one based on logical selections is using 
 `gmx make_ndx` - this requires a `.tpr` for full functionality or a `.gro` for reduced functionality.
+To also use indices that have been defined previously use the `-n` option.
 
+```
+gmx make_ndx -f tprfile -n pre_existing_index_file -o new_indexfile
+
+```
 You can also simply write the indexfiles by yourself (usually using a script for whatever you need).
 
 The structure is for a group you want to define as "SEL" where the indices correspond to your atom indices.
