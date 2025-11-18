@@ -243,7 +243,7 @@ In the `[ system ]` section you can give your topology any name you want. It has
 Opposed to this the `[ molecules ]` section is extremely important. Here you write how many of which of your
 molecules are within the geometry. Be careful to add the molecules in the correct order.
 You can also have multiple of the same residues, but they NEED to be in the very same order as in your geometry.
-e.g. 
+e.g. For a system with SOL, PRO and UNL residues: 
 ```
 SOl 100 
 PRO 1 
@@ -257,6 +257,13 @@ PRO 1
 UNL2 
 SOL 251
 ```  
+The latter would expect your system to start with the PRO residue, followed by 2 UNL and 251 SOL residues. You can find
+such errors later by going over the "Warnings" of `gmx grompp`, but if they get ignored you may end up destroying your system, 
+because the apparent interactions are between the wrong indices of atoms.
+
+So your system topology (e.g.`system.top`) needs to contain also the water forcefield (in our case tip3p) and the ion force field that you want to use.
+Go ahead and add the following to your `.top` file (replace .itps with however you named your pure `.itp` files.)
+And also adapt the number of residues and their order in the `[ molecules]` section according to the `.gro` file that you want to use.
 
 ``` 
 ; Include water topology
@@ -289,7 +296,82 @@ DNA_chain_C         1
 Protein_chain_A     1 ; the order has to be the same as in the gro file!
 ```
 
+Next first check your geometry visually with vmd  `vmd your_geometry.gro`. (once vmd is running type `pbc box` into the command line. This will show you the pbc-box. Is the boxsize ok? The largest distance between two interacting points needs to be less than half the box length - to avoid self-interaction. Even using cutoffs, it is really recommended to make the box more than twice as large in each direction that your largest molecule! If the box is too small you can edit it either manually or using `gmx editconf`.)
 
+If it looks fine, you can also already use the `example.mdp` 
+to initally grompp your system, even if it does not yet contain solvents, just to check whether all the steps so far seem correct. 
+If you get just a warning that the atomnames differ, and it is about different naming schemes of the SAME atoms, you can ignore this by adding a `--maxwarn 1` (ignore 1 warning in grompp). 
+If you get no further warnings or errors, next we will add the solvent. 
+As the forcefield parameters are already speciefied in the topology, you just need to actually add the solvent molecules to the `.gro`file and add the number and order in the `[ molecules ]`section of the `.top`file. You may want to copy your `.gro` and `.top` files for this. 
+
+
+You can now use `gmx solvate` to add water to the system. Because tip3p is a three-point model, you do not need to change the settings from the default (`spc216.gro`), but you should specify your geometry file and your topology file to modify.
+
+It should look like this:
+
+
+```
+gmx solvate -cp full_system.gro -o solvated_full_system.gro -p  full_system.top 
+```
+HINT: ALL GMX commands have their own manual page: e.g. https://manual.gromacs.org/current/onlinehelp/gmx-solvate.html (online)
+or in the command line via the `man` command. You can (and should!) always check the options  for all commands that you are using.
+
+Now look at your system again using vmd. 
+
+#### Interlude some quick overview over VMD (VISUAL MOLECULAR DYNAMICS)
+
+ VMD is a molecular visualization program for displaying, animating, and analyzing large biomolecular systems using 3-D graphics and built-in scripting. VMD supports computers running MacOS X, Unix, or Windows, is distributed free of charge, and includes source code. (https://www.ks.uiuc.edu/Research/vmd/)
+
+ While this is an extremely powerful program that can also be directly be used as a frontend for another MD software, we will only be using it for 
+ visualization purposes in this course.
+
+ The program can be opened either by itself `vmd`, which requires you to load data manually via the GUI, or you can also directly load data upon program call
+ `vmd grofile.gro` - When you later read trajectories, you will see that `vmd grofile.gro trajectoryfile.xtc` is required, because the pure trajectory file only contains information about coordinates, but not atomtypes, residues etc.
+
+ Upon opening your solvated system you should see something like this:
+
+The Main window is the actually controlling window.
+The Graphical Representation controls how stuff is represented (it can also be closed and reopened from the Main without any issues.)
+
+![VMD screenshot](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-29.png>)
+![Bildschirmfoto vom 2025-11-18 09-18-33](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-33.png>)
+![Bildschirmfoto vom 2025-11-18 09-18-39](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-39.png>)
+
+Unless other settings have been saved to the `.vmdrc` file, the default will be to show everything (connected by lines).
+If you need to load data into your molecules you could do so via the "Main" window (you will need that later.)
+As an example you will now see how to select residues/molecules - for now select only the `resname DA DC DG DT` which should correspond to your helix. 
+Typical selections are `name` (atomic names), `resname` (residue names - e.g. amino acids, base pairs), `resid` (id of residue), `serial`(index).
+
+Further HINTS:
+    Logical operations are possible and are used by adding `or` or  `and`.
+    Inverting a selection with `not` is also useful (e.g. `not resname SOL`for displaying all non-water.)
+    Maybe you also want to disply the environment (especially useful for H-bond selections) of a group.
+    For this you can use `within X of`(e.g. `(within 5 of resname DA DG DC DT) and (resname SOL)`).
+    If you do not want to cut their residues, you can also use `same resid as`.
+    Using `pbc box` in the vmd console you can show the periodic box.
+    If you later display a non-centered system do not use `Lines`as the Drawing Method. Instead use `DynamicBonds`.
+
+
+![Bildschirmfoto vom 2025-11-18 09-26-10](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-10.png>)
+![Bildschirmfoto vom 2025-11-18 09-26-15](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-15.png>)
+![Bildschirmfoto vom 2025-11-18 09-26-46](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-46.png>)
+![Bildschirmfoto vom 2025-11-18 09-27-03](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-27-03.png>)
+![Bildschirmfoto vom 2025-11-18 09-27-40](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-27-40.png>)
+![Bildschirmfoto vom 2025-11-18 09-29-29](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-29-29.png>)
+![Bildschirmfoto vom 2025-11-18 09-30-06](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-30-06.png>)
+
+
+By using Display in the Main window you can easily center on your desired fragments.
+
+
+Changing the Draw style in the Graphical Representations may help for visualization.
+
+
+
+
+todo  add gmx trjconv fitting
+
+ 
 
 ### TODO HERE ACTUAL INSTRUCTIONS 
 
