@@ -3,7 +3,8 @@
 The following is an overview for the practical side of the course.
 You will find both information, files and instuctions here.
 
-## Linux/Bash introduction (day1)
+## DAY 1
+### Linux/Bash introduction 
 
 When working on a cluster there may not be a GUI. Also on your own
 machine it may be a lot more efficient to use a terminal.
@@ -132,7 +133,7 @@ you may somethimes need to change permissions. To do this you can use chmod to c
 | `rwx` (read, write & execute) | 7 | `rwx` |
 
 
-## Setting up a Simulation for the combined 1J46.pdb
+## Setting up a Simulation for the combined Protein-DNA system 1J46.pdb
 
 An MD simulation in GROMACS will always need 3 things
   1) coordinates, which tell the program where is what (usually a `.gro` file)
