@@ -441,7 +441,34 @@ Connect (via ssh) from the login node to the reserved node on the cluster (`ssh 
 (This will change the `mdrun options` slightly, e.g. using `-nt`, `-pin` etc.)
 Before running the jobs here for the first time please get an ok of the assistants.
 
- 
+
+### Generating an index file 
+
+Index files allow for a more in-depth selection for later analysis or other operations.
+
+The simples way to generate one based on logical selections is using 
+`gmx make_ndx` - this requires a `.tpr` for full functionality or a `.gro` for reduced functionality.
+
+You can also simply write the indexfiles by yourself (usually using a script for whatever you need).
+
+The structure is for a group you want to define as "SEL" where the indices correspond to your atom indices.
+```
+[ SEL ]
+ index1 index2 ....
+
+
+[ OTHERSEL ]
+
+indexS1 indexS2
+
+```
+
+We will use such a ndx file to make our visualisation of the final trajectory easier on our eyes.
+
+
+Select the DC basepairs and then use `gmx trjconv` with the option `fit rot+trains` to obtain a trajectory where those groups are fitted on top of another (removing its diffusion and rotation.)
+This allows you to display multiple frames with vmd (change `now` to `startframe:endframe`) for a part of the trajectory and use a slight smoothing factor in the "Trajectory" section of the Graphical Representations window of vmd. This directly shows you how flexible different parts of your molecule are (if your fitted selection is rigid - e.g. a protein backbone.)
+
 
 ### NOTES TO MYSELF 
 
