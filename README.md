@@ -470,6 +470,73 @@ indexS1 indexS2
 
 We will use such a ndx file to make our visualisation of the final trajectory easier on our eyes.
 
+### excursion the .mdp file
+
+Like with most of the gromacs human-readable files, you can write comments with a ";" here.
+That also means it is simple to prepare a single `.mdp`file that contains your basic run instructions and modify it for your current runs.
+
+
+Let's look at some options:
+```
+integrator              = md
+nsteps                  = 500000
+nstlist                 = 10 
+nstcomm                 = 50
+dt                      = 0.001
+nstxtcout               = 500
+nstcalcenergy           = 500
+```
+`integrator = md` means a Leap frog integrator is used for integrating Newton's equations of motion.
+It is also specified how many steps the simulation is supposed to run (`nsteps`) and how long each timestep is (`dt` (ps)).
+nstxcout means the coordinate output is written in compressed form every n steps. (if you need velocity or force use `nstvout`and `nstfout`. We do not do this by default, as this triples the storage space needed.)
+`coulombtype             = PME`means we are using a parallel form of ewald summation (particle mesh ewald).
+For the long-range continuation we use the analytic continuation to the energy and the pressure (`DispCorr                = EnerPres`).
+
+Temperature gets managed with the v-rescale thermostat.
+```
+tcoupl                  = v-rescale 
+tc-grps                 = system
+tau-t                   = 1.0
+ref-t                   = 300
+```
+and pressure can be controlled by the barostat. Apart from the number of simulation steps this is the main thing you need to change during your equilibration
+runs opposed to the production run.
+```
+
+pcoupl                  = no;  Berendsen; Parrinello-Rahman
+pcoupltype              = isotropic
+tau-p                   = 1.0
+ref-p                   = 1.0
+compressibility         =    4.5e-5  
+
+```
+
+To speed up our calculations, we use constraints on our bonds using LINCS (do not use this for planar ring-systems without thinking).
+
+```
+constraints             = all-bonds ;h-angles
+constraint-algorithm    = LINCS
+lincs-order             = 4
+lincs-iter              = 2
+verlet-buffer-tolerance = 0.0001
+```
+
+The following describes how to deal with the real-space cutoff and declares the whole system as a single energy group (for gpu parallelism).
+If you want to separate nergy groups afterwards use  `gmx mdrun -rerun`options with individual energy groups. As this runs on GPU vs CPU you will save most time this way
+
+```
+rlist =1.2
+rcoulomb =1.2
+rvdw                     = 1.2
+vdwtype =cutoff
+
+energygrps = System
+```
+
+Those options are only for a very basic run. 
+**M**ore advanced options can (like everything) be found in the documentation. **A**lsways remember **R**ead **T**he very **F**ine **M**anual (**RTFM**)
+
+
 ### Displaying multiple frames of the trajectory without diffusion
 
 Select the DC basepairs and then use `gmx trjconv` with the option `fit rot+trains` to obtain a trajectory where those groups are fitted on top of another (removing its diffusion and rotation.)
