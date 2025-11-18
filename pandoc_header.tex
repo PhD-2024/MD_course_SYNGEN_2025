@@ -1,0 +1,25 @@
+% pandoc_header.tex
+% Header to improve PDF output: auto-scale images and allow line-breaking in code blocks
+% Designed for use with xelatex or lualatex (--pdf-engine=xelatex or --pdf-engine=lualatex)
+
+% fontspec is required for xelatex/lualatex (do not use with pdflatex)
+\usepackage{fontspec}
+\usepackage{microtype}
+
+% Make images auto-fit the text width while preserving aspect ratio
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\AtBeginDocument{\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}}
+
+% Allow breaking long lines in verbatim/code blocks
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere}
+
+% Smaller captions for figures/tables
+\usepackage{caption}
+\captionsetup{font=small}
+
+% Optional: reduce spacing in tables (helps wide tables)
+\usepackage{booktabs}
+\usepackage{etoolbox}
+\AtBeginEnvironment{tabular}{\small}
