@@ -149,6 +149,7 @@ An MD simulation in GROMACS will always need 3 things
   how do describe LR-interactions, free energy dH/dlambda calculations,...  )
 
   Once you have all those, you can send the instructions to the "preprocessor" 
+
   ``` gmx grompp -f instuctions.mdp -p topology_file.top -c starting_coordinates.gro -o name_how_runfile_should_be_called.tpr```
 
   This then checks everything for correctness and yields a `.tpr`file.
@@ -156,6 +157,7 @@ An MD simulation in GROMACS will always need 3 things
   This you can then use for a simulation. To simplify the naming conventions and to prevent you from typing differnt stuff for
   energy, trajectory, log, etc. files you can use the `deffnm` option here, which uses the same name for everything and just changes the file endings.
   e.g. this starts a (verbose) run with the name chosen above. (HINT DO NOT WRITE .tpr here, that conflicts with other file endings.)
+
    ``` gmx mdrun -v -deffnm  name_how_runfile_should_be_called```
 
   The following are some common GROMACS mdrun output files
@@ -199,6 +201,7 @@ For this make shoure you have the `amber99bsc1`  folder in your current working 
 Now make 3 preliminary topologies and geometries based on your pdb inputs.
 It is recommended to use separated folders.
 Usage of `gmx pdb2gmx` is
+
 ``` 
 gmx pdb2gmx -f pdbfile -ff path/to/forcefield -o output_for_geometry.gro -i output_for_topology.itp
 ```
