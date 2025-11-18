@@ -537,7 +537,7 @@ energygrps = System
 ```
 
 Those options are only for a very basic run. 
-More advanced options can (like everything) be found in the documentation. **A**lsways remember **R**ead **T**he very **F**ine **M**anual (**RTFM**)
+More advanced options can (like everything) be found in the documentation. **A**lways remember **R**ead **T**he very **F**ine **M**anual (**RTFM**)
 
 
 
