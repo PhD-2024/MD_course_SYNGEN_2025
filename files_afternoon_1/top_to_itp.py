@@ -10,6 +10,6 @@ with open(args.file,"r") as inf:
 		if "; Include water topology" in line:
 			printing=False
 
-		if printing:
-			print(line.split(sep=";")[0], end="")
+		if printing and (len(line.split(sep=";")[0])>= 1):
+			print(line.split(sep=";")[0])
 
