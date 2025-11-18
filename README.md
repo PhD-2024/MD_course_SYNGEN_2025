@@ -473,7 +473,7 @@ indexS1 indexS2
 
 We will use such a ndx file to make our visualisation of the final trajectory easier on our eyes.
 
-### excursion the .mdp file
+### Excursion: the .mdp file - Instructions for your GROMACS run
 
 Like with most of the gromacs human-readable files, you can write comments with a ";" here.
 That also means it is simple to prepare a single `.mdp`file that contains your basic run instructions and modify it for your current runs.
@@ -537,7 +537,8 @@ energygrps = System
 ```
 
 Those options are only for a very basic run. 
-**M**ore advanced options can (like everything) be found in the documentation. **A**lsways remember **R**ead **T**he very **F**ine **M**anual (**RTFM**)
+More advanced options can (like everything) be found in the documentation. **A**lsways remember **R**ead **T**he very **F**ine **M**anual (**RTFM**)
+
 
 
 ### Displaying multiple frames of the trajectory without diffusion
