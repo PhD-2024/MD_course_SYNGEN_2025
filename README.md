@@ -334,7 +334,9 @@ The Main window is the actually controlling window.
 The Graphical Representation controls how stuff is represented (it can also be closed and reopened from the Main without any issues.)
 
 ![VMD screenshot](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-29.png>)
+
 ![Bildschirmfoto vom 2025-11-18 09-18-33](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-33.png>)
+
 ![Bildschirmfoto vom 2025-11-18 09-18-39](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-18-39.png>)
 
 Unless other settings have been saved to the `.vmdrc` file, the default will be to show everything (connected by lines).
@@ -352,24 +354,44 @@ Further HINTS:
     If you later display a non-centered system do not use `Lines`as the Drawing Method. Instead use `DynamicBonds`.
 
 
-![Bildschirmfoto vom 2025-11-18 09-26-10](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-10.png>)
+<!-- ![Bildschirmfoto vom 2025-11-18 09-26-10](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-10.png>) -->
 ![Bildschirmfoto vom 2025-11-18 09-26-15](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-15.png>)
-![Bildschirmfoto vom 2025-11-18 09-26-46](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-46.png>)
+<!-- ![Bildschirmfoto vom 2025-11-18 09-26-46](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-26-46.png>) -->
+
+As you see the display stayed the same. This is inconvenient: 
+By using Display - Reset View in the Main window you can easily center on your desired fragments.
 ![Bildschirmfoto vom 2025-11-18 09-27-03](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-27-03.png>)
 ![Bildschirmfoto vom 2025-11-18 09-27-40](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-27-40.png>)
+
+Your Drawing Method is still lines, you can change it in the Graphical Representations window. This may help for visualization purposes or also to render publication quality pictures. (We will not talk about this now. If there is time at the end of the course we can do this.).
+
 ![Bildschirmfoto vom 2025-11-18 09-29-29](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-29-29.png>)
 ![Bildschirmfoto vom 2025-11-18 09-30-06](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-30-06.png>)
 
+You can also use the `Coloring Method` to e.g. manually color selections, color residues differently,...
 
-By using Display in the Main window you can easily center on your desired fragments.
+#### Back to the system preparation
+
+If your system looks fine, you can now go to prepare the actual simulation.
+
+So far we have obtained 2 of the 3 required inputs. (Geometry and topology)
+We still need the (`.mdp`) actual instructions what GROMACS is supposed to do with those.
+
+For this you can use the prepared files `steep.mdp`, `nvt.mdp`, `npt_ber.mdp` and `npt.mdp`.
+In principle (starting from an equilibrium configuration) only the actual instructions for the simulation in the isothermal-isobaric ensemble (`npt.mdp`) 
+would be necessary. However, we do not know how good our starting guess is.
+Therefore, we try to prepare our system.
+1) Using an energy-minimization to get rid of high energy clashes, that would cause huge forces, tearing our system apart. (the corresponding .mdp can have other options, which will be ignored.)
+2) Similarly running a canonic ensamble simulation should help distribute the molecules better, preventing the barostat from exploding.
+3) Using the Berendsen barostat first, (stable, but not quite the correct ensemble) helps to get the system slowly into a region of phase-space that is already close to the npT ensemble. 
+4) Using the Parrinello-Rahman barostat gives the correct ensemble, but may explode if the system is not yet well prepared.
+(if you experience periodic fluctuations of the boxsize in your simulations in the future this may be the cause, for this check a fourier transform as a test.)
+
+Now do an energy-minimization, and the equilibration steps and then run the simulation. 
+
+For analysis you may be given a finished system.
 
 
-Changing the Draw style in the Graphical Representations may help for visualization.
-
-
-
-
-todo  add gmx trjconv fitting
 
  
 
