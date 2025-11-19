@@ -11,6 +11,7 @@ alternatively.
 `pandoc README.md -s -o README_pandoc_converted.pdf --pdf-engine=lualatex -V geometry:margin=1in -V fontsize=10pt --include-in-header=pandoc_header.tex`
 if you get split over linewidths. 
 
+
 ## DAY 1
 ### Linux/Bash introduction 
 
@@ -330,6 +331,7 @@ or in the command line via the `man` command. You can (and should!) always check
 
 Now look at your system again using vmd. 
 
+
 #### Interlude some quick overview over VMD (VISUAL MOLECULAR DYNAMICS)
 
  VMD is a molecular visualization program for displaying, animating, and analyzing large biomolecular systems using 3-D graphics and built-in scripting. VMD supports computers running MacOS X, Unix, or Windows, is distributed free of charge, and includes source code. (https://www.ks.uiuc.edu/Research/vmd/)
@@ -386,6 +388,39 @@ You can also use the `Coloring Method` to e.g. manually color selections, color 
 
 If your system looks fine, you can now go to prepare the actual simulation.
 
+However, there remains 1 more thing to modify: So far we have a strongly charged system, in pure water.
+
+You can count the charges by running the scripts:
+
+`python3 scripts/count_aa_charge.py` and `python3 count_phosphate_charge.py`.
+
+For this course we want a simulation at neutral pH. Is the current structure what you expect at neutral pH? What are the pKs values of the aminoacids/ which charges are expected on the base pairs?
+Because we are dealing with purely classical force fields, the protonation states will not change!
+
+If those charge states are correct, we now will add ions to 
+1) neutralize and
+2) create the ionic-concentration that we want.
+
+For this you need a `.tpr` file (dummy- not expected for a simulation) first. 
+You get this by running `gmx grompp` but you can just ignore the warning of bad charges with `-maxwarn 1`.
+
+Then you can run `gmx genion` - please use a concentration of 50 mM. You may want to copy your original topology file because gmx genion writes
+to the topology file. If you do this multiple times you will have to modify it by hand!
+
+This could for example look like this:
+
+```
+gmx grompp -f nvt.mdp -c startgro.gro -p full_system.top -o dummy.tpr -maxwarn 1
+cp full_system.top full_system_ions.top
+gmx genion -s dummy.tpr  -o full_system_ions.gro -p full_system_ions.top  -neutral  yes -conc 0.050
+```
+
+Again look at the resulting `.gro` and `.top` files.
+Visualize the `.gro` file with vmd. You may want to set the style to "VDW" on a selection of "not SOL" - as the ions are not bonded to anything, you will not see them well otherwise.
+If everything looks fine, you can continue.
+
+#### The .mdp files
+
 So far we have obtained 2 of the 3 required inputs. (Geometry and topology)
 We still need the (`.mdp`) actual instructions what GROMACS is supposed to do with those.
 
@@ -393,11 +428,16 @@ For this you can use the prepared files `steep.mdp`, `nvt.mdp`, `npt_ber.mdp` an
 In principle (starting from an equilibrium configuration) only the actual instructions for the simulation in the isothermal-isobaric ensemble (`npt.mdp`) 
 would be necessary. However, we do not know how good our starting guess is.
 Therefore, we try to prepare our system.
-1) Using an energy-minimization to get rid of high energy clashes, that would cause huge forces, tearing our system apart. (the corresponding .mdp can have other options, which will be ignored.)
-2) Similarly running a canonic ensamble simulation should help distribute the molecules better, preventing the barostat from exploding.
-3) Using the Berendsen barostat first, (stable, but not quite the correct ensemble) helps to get the system slowly into a region of phase-space that is already close to the npT ensemble. 
-4) Using the Parrinello-Rahman barostat gives the correct ensemble, but may explode if the system is not yet well prepared.
+1) Using an **energy-minimization** to get rid of high energy clashes, that would cause huge forces, tearing our system apart. (the corresponding .mdp can have other options, which will be ignored.)
+2) Similarly running a **canonic ensamble (nVT)**  simulation should help distribute the molecules better, preventing the barostat from exploding.
+3) Using the **Berendsen barostat first**, (stable, but not quite the correct ensemble) helps to get the system slowly into a region of phase-space that is already close to the npT ensemble. 
+4) Using the **Parrinello-Rahman barostat** gives the correct **npT ensemble**, but may explode if the system is not yet well prepared.
 (if you experience periodic fluctuations of the boxsize in your simulations in the future this may be the cause, for this check a fourier transform as a test.)
+
+
+The nvT and an (maybe) an initial part of the npT simulation can be run using position restraints on the biomolecules.
+`define = -DPOSRES`in the corresponding `.mdp`. **Be sure not to use them for production runs!** 
+
 
 Now do an energy-minimization, and the equilibration steps and then run the simulation. 
 For this (as mentioned above) first run `gmx grompp` and then `gmx mdrun`
