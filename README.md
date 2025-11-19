@@ -404,7 +404,7 @@ If those charge states are correct, we now will add ions to
 For this you need a `.tpr` file (dummy- not expected for a simulation) first. 
 You get this by running `gmx grompp` but you can just ignore the warning of bad charges with `-maxwarn 1`.
 
-Then you can run `gmx genion` - please use a concentration of 50 mM. You may want to copy your original topology file because gmx genion writes
+Then you can run `gmx genion` - please use a concentration of 150 mM. You may want to copy your original topology file because gmx genion writes
 to the topology file. If you do this multiple times you will have to modify it by hand!
 
 This could for example look like this:

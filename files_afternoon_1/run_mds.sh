@@ -1,10 +1,11 @@
 steps="nvt npt_ber_posres"
-startgro="solvated_full_system.gro"
+#this is now in the make structure
+# startgro="solvated_full_system.gro"
 
-#first we need a  dummy tpr
-#gmx grompp -f nvt.mdp -c $startgro -p full_system.top -o dummy.tpr -maxwarn 1
-#cp full_system.top full_system_ions.top
-#echo "SOL" | gmx genion -s dummy.tpr  -o full_system_ions.gro -p full_system_ions.top  -neutral  yes -conc 0.050
+# #first we need a  dummy tpr
+# gmx grompp -f nvt.mdp -c $startgro -p full_system.top -o dummy.tpr -maxwarn 1
+# cp full_system.top full_system_ions.top
+# echo "SOL" | gmx genion -s dummy.tpr  -o full_system_ions.gro -p full_system_ions.top  -neutral  yes -conc 0.150
 
 startgro="full_system_ions.gro"
 #read -p "works ?"
