@@ -1,28 +1,24 @@
-define = -DPOSRES
 integrator              = md
-nsteps                  = 500000
-nstlist                 = 10 
+nsteps                  = 5000000
+nstlist                 = 20 ; 20
 nstcomm                 = 50
-dt	                = 0.0005
+dt	                = 0.002
 nstxtcout               = 500
 nstcalcenergy           = 500
 cutoff-scheme           = verlet
 coulombtype             = PME;
 DispCorr                = EnerPres
-tcoupl                  = v-rescale 
+tcoupl                  = v-rescale ;berendsen
 tc-grps                 = system
 tau-t                   = 1.0
 ref-t                   = 300
 
-pcoupl                  = no;  Berendsen; Parrinello-Rahman
+pcoupl                  =  Berendsen; Parrinello-Rahman
 pcoupltype              = isotropic
 tau-p                   = 1.0
 ref-p                   = 1.0
 
-; NOT CORRECT
-compressibility         =    4.5e-5  ; water ; 300K ; todo 200K
-; 
-
+compressibility         =    4.5e-5 
 gen-vel                 =  no
 
 constraints             = all-bonds ;h-angles
@@ -31,9 +27,9 @@ lincs-order             = 4
 lincs-iter              = 2
 verlet-buffer-tolerance = 0.0001
 
-rlist =1.0
-rcoulomb =1.0
-rvdw                     = 1.0
+rlist =1.2
+rcoulomb =1.2
+rvdw                     = 1.2
 vdwtype =cutoff
 
 energygrps = System
