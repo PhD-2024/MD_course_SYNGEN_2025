@@ -495,6 +495,11 @@ Connect (via ssh) from the login node to the reserved node on the cluster (`ssh 
 (This will change the `mdrun options` slightly, e.g. using `-nt`, `-pin` etc.)
 Before running the jobs here for the first time please get an ok of the assistants.
 
+If you are using a GPU node please use (on the available gpu - check `nvidia-smi -l` to see what is available) to get good performance.
+
+```
+gmx mdrun -deffnm YOURFILENAME -gpu_id 0 -nt 8
+```
 
 ### Generating an index file 
 
