@@ -1,4 +1,4 @@
-# MD_course
+# MD_course - practical examples
 
 The following is an overview for the practical side of the course.
 You will find both information, files and instuctions here.
