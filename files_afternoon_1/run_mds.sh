@@ -15,7 +15,7 @@ do
 gmx grompp -f $part.mdp -c $startgro -p  full_system_ions.top -o $part.tpr -r $startgro
 
 startgro=$part.gro
-gmx mdrun -deffnm $part -v -cpi
+gmx mdrun -deffnm $part -v -cpi -gpu_id 1 -nt 8
 done
 
 steps="npt_ber npt" # no more position restraints here!
@@ -23,5 +23,5 @@ for part in $steps
 do
 gmx grompp -f $part.mdp -c $startgro -p  full_system_ions.top -o $part.tpr 
 startgro=$part.gro
-gmx mdrun -deffnm $part -v -cpi
+gmx mdrun -deffnm $part -v -cpi -gpu_id 0 -nt 8
 done
