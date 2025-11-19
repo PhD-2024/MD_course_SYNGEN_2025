@@ -490,9 +490,12 @@ Normally you submit scripts on a cluster using a queuing system.
 For the course however we have blocked a node, so you can directly run here.
 
 
-Connect (via ssh) from the login node to the reserved node on the cluster (`ssh user@reserved_machine`) - you can run your gmx run there. For this you should specify how many resources you can use with the assistants.
+Connect (via `ssh`) 
+1) to the cluster (`ssh -Y username@int-nano.int.kit.edu`)
+2) from the login node to the  reserved node on the cluster (`ssh user@reserved_machine`) - you can run your gmx run there. 
+For this you should clarify how many resources you can use with the assistants on the day of the course.
 
-(This will change the `mdrun options` slightly, e.g. using `-nt`, `-pin` etc.)
+(This will change the `mdrun options` slightly, e.g. using `-nt`, `-pin`, `-pinoffset` etc. on a CPU node or e.g. `-gpu_id`  on a GPU node.)
 Before running the jobs here for the first time please get an ok of the assistants.
 
 If you are using a GPU node please use (on the available gpu - check `nvidia-smi -l` to see what is available) to get good performance.
