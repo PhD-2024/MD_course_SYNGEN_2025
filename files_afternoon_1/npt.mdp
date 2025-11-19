@@ -3,7 +3,7 @@ nsteps                  = 10000000
 nstlist                 = 20 ; 20
 nstcomm                 = 50
 dt	                = 0.002
-nstxtcout               = 500
+nstxtcout               = 5000
 nstcalcenergy           = 500
 cutoff-scheme           = verlet
 coulombtype             = PME;
@@ -28,9 +28,9 @@ lincs-order             = 4
 lincs-iter              = 2
 verlet-buffer-tolerance = 0.0001
 
-rlist =1.2
-rcoulomb =1.2
-rvdw                     = 1.2
+rlist =1.0
+rcoulomb =1.0
+rvdw                     = 1.0
 vdwtype =cutoff
 
 energygrps = System

@@ -30,9 +30,9 @@ lincs-order             = 4
 lincs-iter              = 2
 verlet-buffer-tolerance = 0.0001
 
-rlist =1.2
-rcoulomb =1.2
-rvdw                     = 1.2
+rlist =1.0
+rcoulomb =1.0
+rvdw                     = 1.0
 vdwtype =cutoff
 
 energygrps = System
