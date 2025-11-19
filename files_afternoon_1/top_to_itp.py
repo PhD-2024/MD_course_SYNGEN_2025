@@ -11,5 +11,9 @@ with open(args.file,"r") as inf:
 			printing=False
 
 		if printing and (len(line.split(sep=";")[0])>= 1):
+			if "helix_part/posre" in line:
+				line=line.replace("helix_part/posre","posre")
+			elif "protein_part/posre" in line:
+				line=line.replace("protein_part/posre","posre")
 			print(line.split(sep=";")[0])
 
