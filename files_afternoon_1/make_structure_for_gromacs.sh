@@ -122,3 +122,11 @@ sed "s|DNA_chain_B         1|DNA_chain_B         0|g" full_system.top > protein_
 sed -i  "s|DNA_chain_C         1|DNA_chain_C         0|g"  protein_system.top
 
 gmx solvate -cp full_system.gro -o solvated_full_system.gro -p  full_system.top 
+
+
+
+
+#first we need a  dummy tpr
+gmx grompp -f nvt.mdp -c solvated_full_system.gro -p full_system.top -o dummy.tpr -maxwarn 1
+cp full_system.top full_system_ions.top
+echo "SOL" | gmx genion -s dummy.tpr  -o full_system_ions.gro -p full_system_ions.top  -neutral  yes -conc 0.150
