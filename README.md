@@ -244,7 +244,7 @@ For the corresponding topology you also want to combine all systems into 1 file.
 because you can just set the number at the very bottom.
 
 To obtain this this make a new file `system.top` (or however you want to call it).
-To have the ff paramters you should start with the header from `./amber99bsc1.ff/forcefield.itp.
+To have the ff paramters you should start with the header from `./amber99bsc1.ff/forcefield.itp`.
 If you have it in a subfolder, then you should of course change the import to the corresponding subfolder of course.
 
 First use the pdb2gmx generated topologies and run `python3 top_to_itp.py --file old.itp > new.itp`.
@@ -457,7 +457,6 @@ You will connect to  int-nano.int.kit.edu using the username username by using
 
 ```
 ssh -Y username@int-nano.int.kit.edu
-
 ```
 
 There you should see your folders. Make a new folder for this course and if you need to remove/move stuff in this course consult your advisors. 
@@ -468,21 +467,20 @@ you can then copy your inputs from the course pc via `scp` (secure copy) or `rsy
 Those work by 
 ```
 scp target destination
-
 ```
 or 
 
 ```
 rsync target destination
-
 ```
+
 for copying whole folders it is recommendet do use  a dry-run first and then run the command again without this option if it looks correct.
 
 
 ```
 rsync -a --progress --verbose --dry-run target destination
-
 ```
+
 Normally you submit scripts on a cluster using a queuing system. 
 For the course however we have blocked a node, so you can directly run here.
 
@@ -598,17 +596,13 @@ If your selection is broken over periodic boundary conditions during the traject
 This is also something that you can do with the `gmx trjconv` options. The simplest way for this is ususally `-pbc cluster` and `-center`.  
 
 
-### NOTES TO MYSELF 
+### NOTES TO Self 
 
 
+For assistants (will not be available to students) - all instructions for afternoon d1 can be automatically tested by running 
+`make_structure_for_gromacs.sh ` followed by `run_mds.sh`
 
-`make_structure_for_gromacs.sh `so far generates the topology (CHARGES NOT YET SET TO ZERO- DEPENDING ON WHAT WE WANT TO SIMULATE EITHER SIMULATE AT PH, 
-chargestate etc)
-
-todo: once finished make this as instructions, so the students do this in part by line and others they can execute
-
-
-`run_mds.sh`is a script that they will have to do themselves- not for the course but for our usage
+The students get the `.py`scripts, and the initial `.pdb` file to use but not the automated setup and mdruns. (They can type it themselves.)
 
 
 
