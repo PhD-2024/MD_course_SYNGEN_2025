@@ -418,6 +418,11 @@ gmx genion -s dummy.tpr  -o full_system_ions.gro -p full_system_ions.top  -neutr
 Again look at the resulting `.gro` and `.top` files.
 Visualize the `.gro` file with vmd. You may want to set the style to "VDW" on a selection of "not SOL" - as the ions are not bonded to anything, you will not see them well otherwise.
 If everything looks fine, you can continue.
+It should look similar to the following example:
+
+
+![Example with ions](<files_afternoon_1/vmd_example_images/vmdscene.png>)
+
 
 #### The .mdp files
 
