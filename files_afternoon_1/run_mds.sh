@@ -1,4 +1,4 @@
-steps=" nvt npt_ber_posres npt_ber npt"
+steps="nvt npt_ber_posres"
 startgro="solvated_full_system.gro"
 
 #first we need a  dummy tpr
@@ -13,7 +13,7 @@ startgro="full_system_ions.gro"
 for part in $steps
 do
 gmx grompp -f $part.mdp -c $startgro -p  full_system_ions.top -o $part.tpr -r $startgro
-read -p works?
+
 startgro=$part.gro
 gmx mdrun -deffnm $part -v -cpi
 done
