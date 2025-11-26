@@ -44,10 +44,12 @@ Here is a quick overview over important bash commands
 | `grep string files`| searches for string in files| 
 | `man command`| opens the manual page for the command - RTFM (Read the very fine manual... |
 | `ssh user@machine` | connects to machine via ssh for your username "user" on the remote machine | 
+| `ssh-keygen -t rsa -b 4096` | Generate an RSA public/private key pair with a 4096-bit key. Use this to enable passwordless SSH authentication: keep the private key secure (e.g. `~/.ssh/id_rsa`) and copy the public key (e.g. `~/.ssh/id_rsa.pub`) to the remote host's `~/.ssh/authorized_keys`. Optionally leave the passphrase empty for non-interactive logins. |
 | `echo` | prints to stout: e.g. `echo foo bar`| 
 | `chmod` | Change file permissions (mode). Examples: `chmod 755 file` or `chmod +x script.sh` |
 | `chown` | Change file owner and group. Example: `chown user:group file` |
-
+| `sbatch jobscript` | Submits a SLURM jobscript. |
+| `squeue -u your_user_name --format="%14i %19P %30j %8u %2t %7M %5D %R" "$@" `| Displays your queued jobs| 
 
 1) (Bash) Scripts are essentially nothing essentially nothing more storing commands in a text file so you can reuse them (also great to have reproducability - no arbitray behavior due to typos-). You usually start them with the so called shebang `#!/bin/bash` which tells the computer with which interpreter to execute it - here bash. `#!/bin/python3`would be a python script for example. You can of course completely forgo it and manually call the `bash`command in the shell.
 
@@ -486,8 +488,27 @@ for copying whole folders it is recommendet do use  a dry-run first and then run
 rsync -a --progress --verbose --dry-run target destination
 ```
 
-Normally you submit scripts on a cluster using a queuing system. 
-For the course however we have blocked a node, so you can directly run here.
+
+You submit scripts on a cluster using a queuing system. Here you will see a SLURM example.
+We will have a special queue for this course.
+
+**DO THIS FIRST: GENERATION OF A PUBLIC-PRIVATE KEY PAIR**
+For logging in to the cluster we will use ssh with an rsa public private key pair.
+
+For this you should first generate a keypair (feel free to also give it a different name).
+
+```
+ssh-keygen -t rsa -b 4096
+```
+
+You do not want to choose a password.
+
+
+Then we will need to copy the ssh key to the foreign machine. 
+
+Usually (if you already had an account) this would be as simple as logging in on the machine moving it to the corresponding file.
+Here we will need to send this to the admin  - so copy the `.pub` key to the course folder.
+
 
 
 Connect (via `ssh`) 
@@ -504,6 +525,40 @@ If you are using a GPU node please use (on the available gpu - check `nvidia-smi
 gmx mdrun -deffnm YOURFILENAME -gpu_id 0 -nt 8
 ```
 
+This command you will not run from the command line. Instead
+you will put your commands at the end of a SLURM job script (check the example from the course and modify it to your needs).
+
+### A SLURM job script
+
+```
+#!/bin/sh
+#SBATCH -J gromacs_run
+#SBATCH --time=02:00:00                  #Set walltime
+#SBATCH --nodes=1                        #Choose number of nodes  - should be 1 in all your cases
+#SBATCH --ntasks=8
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=1
+#SBATCH --threads-per-core=1
+#SBATCH --mem-per-cpu=500
+#SBATCH --partition=gpu                     #MODIFY THIS FOR THE COURSE QUEUE
+#SBATCH --mail-type=END                     # Send email at job completion
+#SBATCH --mail-user=yourmail@example.edu    # Email address for notifications
+#SBATCH --output=CURRENT_PATH/%j_out.log # Will save the stdout - modify this to your directory or leave out this line
+#SBATCH --error=CURRENT_PATH/%j_err.log  # Will save the stderr - modify this to your directory or leave out this line
+
+
+echo "Start Job $SLURM_ARRAY_TASK_ID on $HOSTNAME"  # Display job start information
+
+#module load orca
+module load gromacs
+echo "using"
+which gmx
+
+
+############ PUT YOUR ACTUAL COMMANDS TO EXECUTE HERE
+```
+
+You can submit your script from the folder you want to run it by `sbatch runscript.sh`
 ### Generating an index file 
 
 Index files allow for a more in-depth selection for later analysis or other operations.
@@ -617,7 +672,9 @@ For assistants (will not be available to students) - all instructions for aftern
 
 The students get the `.py`scripts, and the initial `.pdb` file to use but not the automated setup and mdruns. (They can type it themselves.)
 
+### full data 
 
+todo check for correctness under is2364@int-nano:/shared/user_data/is2364/md_course_example
 
 ## Course graining (day 2) 
 
