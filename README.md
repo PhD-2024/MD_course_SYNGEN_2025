@@ -678,4 +678,149 @@ todo check for correctness under is2364@int-nano:/shared/user_data/is2364/md_cou
 
 ## Course graining (day 2) 
 
+Tutorials on coarse-grained (CG) modelling of biomolecular system
+
+You will find the required `sirah_x2.2_20-07.ff` under files_afternoon_2.
+
+Notes: 
+1) Files `residuetypes.dat` and `specbond.dat` are essential for the correct definition of molecular
+groups and auto-detection of disulfide bonds and cyclic DNA polymers.
+
+2) The mapping to CG requires the correct protonation state of each residue at a given pH. We recommend using the PDB2PQR server (https://server.poissonboltzmann.org/pdb2pqr) and choosing the output naming scheme of AMBER for best compatibility.
+For the course you can use the previous `pdb`-Structure from afternoon_1.
+
+First you should either create a topology referring to your ff file (like on day 1) - alternatively you can create symbolic links to the ff folder in the following way.
+```
+ln -s ../sirah_x2.2_20-07.ff sirah.ff
+```
+This command creates a symbolic link named `sirah.ff` in the current directory that points to the directory where you put your ff folder e.g. `../sirah_x2.2_20-07.ff`. Using a symlink lets tools and scripts refer to the force-field folder by a stable name (`sirah.ff`) while keeping the actual files in a shared or versioned location. 
+
+Notes:
+
+- The link uses a relative path, so moving or renaming either the target directory or the folder containing the link will break it. Use `readlink -f sirah.ff` or `ls -l sirah.ff` to inspect where it points.
+- To remove the link, use `rm sirah.ff` (this removes only the link, not the target files).
+- Ensure the target directory contains the expected force-field files and that you have appropriate read permissions. Some GROMACS tools and scripts expect a folder with the exact name `sirah.ff`, so the symlink simplifies compatibility.
+
+Do the same for 
+```
+ln -s sirah.ff/residuetypes.dat
+ln -s sirah.ff/specbond.dat
+```
+
+### Build CG represnetation
+```
+TODO INSERT FIG HERE
+```
+
+```
+./sirah.ff/tools/CGCONV/cgconv.pl -i complex.pdb -o complex_cg.pdb
+```
+Note: Merging both DNA chains is convenient when planning to apply restraints between them.
+run pdb2gmx again (e.g.)
+
+```
+gmx pdb2gmx -f complex_cg.pdb -o complex_cg.gro
+
+```
+Note: During long simulations of DNA, capping residues may eventually separate. If you want to avoid this effect, which is called helix fraying, add Watson-Crick (WC) restraints at terminal base pairs. Merging both DNA chains is convenient when planning to apply restraints between them. Use `topol_DNA2.itp` file to edit.
+
+
+TODO INSERT NEXT FIG HERE
+
+### Create and solvate the system 
+
+Define the simulation box of the system
+```
+gmx editconf -f complex_cg.gro -o complex_cg_box.gro -bt octahedron -d 2.0 -c
+```
+Add WT4 molecules
+```
+gmx solvate -cp complex_cg_box.gro -cs sirah.ff/wt416.gro -o complex_cg_sol1.gro
+```
+
+Note: Edit topol.top to add number of WT4 molecules. Use grep -c WP1 1CRN_cg_sol1.gro to know number. Alternatively add the `.top` file to the options of gmx solvate - see day 1.
+
+### Remove WT4 molecules within 0.3 nm of protein
+ ```
+echo q | gmx make_ndx -f complex_cg_sol1.gro -o complex_cg_sol1.ndx
+
+gmx grompp -f sirah.ff/tutorial/3/GPU/em1_CGPROT.mdp -p topol.top -po delete1.mdp -c complex_cg_sol1.gro -o complex_cg_sol1.tpr -maxwarn 1
+
+gmx select -f complex_cg_sol1.gro -s complex_cg_sol1.tpr -n complex_cg_sol1.ndx -on rm_close_wt4.ndx -select 'not (same residue as (resname WT4 and within 0.3 of group Protein))
+
+gmx editconf -f complex_cg_sol1.gro -o complex_cg_sol2.gro -n rm_close_wt4.ndx
+```
+
+Note: Edit topol.top again to modify WT4 number.
+### Add CG counterions and 0.15M NaCl
+```
+gmx grompp -f sirah.ff/tutorial/3/GPU/em1_CGPROT.mdp -p topol.top -po delete2.mdp -c complex_cg_sol2.gro -o complex_cg_sol2.tpr -maxwarn 1
+gmx genion -s complex_cg_sol2.tpr -o complex_cg_ion.gro -np 67 -pname NaW -nn 55 -nname ClW
+```
+When prompted, choose to substitute WT4 molecules by ions and edit the
+[ molecules ] section in topol.top to include the CG ions and the correct number of WT4.
+
+### Visualize the system
+```
+./sirah.ff/tools/g_top2psf.pl -i topol.top -o complex_cg_ion.psf
+
+vmd complex_cg_ion.psf complex_cg_ion.gro -e sirah.ff/tools/sirah_vmdtk.tcl
+```
+Create an index file including a group for the backbone GN and GO beads
+
+```
+echo -e "a GN GO\n\nq" | gmx make_ndx -f complex_cg_ion.gro -o complex_cg_ion.ndx
+```
+Generate restraint files for the backbone GN and GO beads.
+```
+gmx genrestr -f complex_cg.gro -n complex_cg_ion.ndx -o bkbres.itp
+
+gmx genrestr -f complex_cg.gro -n complex_cg_ion.ndx -o bkbres_soft.itp -fc 100 100 100
+```
+
+Add the restraint topol_Protein.itp.
+### Run the simulation
+**Energy Minimization of side chains** by restraining the backbone*
+```
+gmx grompp -f em1_CGPROT.mdp -p ../topol.top -po em1.mdp -n ../complex_cg_ion.ndx -c ../complex_cg_ion.gro -r ../complex_cg_ion.gro -o complex_cg_em1.tpr
+gmx mdrun -deffnm complex_cg_em1 -v 
+```
+
+**Energy Minimization** of the whole system
+```
+gmx grompp -f em2_CGPROT.mdp -p ../topol.top -po em2.mdp -n ../complex_cg_ion.ndx -c complex_cg_em1.gro -o complex_cg_em2.tpr
+gmx mdrun -deffnm complex_cg_em2 -v 
+```
+
+Make new index group for Protein and DNA. 
+```
+gmx make_ndx -f ../complex_cg_ion.gro -n ../complex_cg_ion.ndx -o index.ndx
+```
+
+**Solvent equilibration**  (wall time 242 s, ntmpi 4 ntomp 4)
+```
+gmx grompp -f eq1_CGPROT.mdp -p ../topol.top -po eq1.mdp -n index.ndx -c complex_cg_em2.gro -r complex_cg_em2.gro -o complex_cg_eq1.tpr
+gmx mdrun -deffnm complex_cg_eq1 -v 
+```
+
+**Soft equilibration to improve side chain solvation** (wall time 1203 s, ntmpi 4 ntomp 4, total 25ns run)
+```
+gmx grompp -f eq2_CGPROT.mdp -p ../topol.top -po eq2.mdp -n index.ndx -c complex_cg_eq1.gro -r complex_cg_eq1.gro -o complex_cg_eq2.tpr
+gmx mdrun -deffnm complex_cg_eq2 -v 
+```
+**Production run**
+```
+gmx grompp -f md_CGPROT.mdp -p ../topol.top -po md.mdp -n index.ndx -c complex_cg_eq2.gro -o complex_cg_md.tpr
+gmx mdrun -deffnm complex_cg_md -v (wall time 505 s, ntmpi 4 ntomp 4, total 10ns run)
+```
+
+**Visualizing the simulation**
+
+Make sure the moleucles are not broken across pbc. It may be good to center the system and or to fit backbones on top of one another. 
+```
+gmx trjconv -s complex_cg_em1.tpr -f complex_cg_md.xtc -o complex_cg_md.whole.xtc -n index.ndx -pbc whole
+gmx trjconv -s complex_cg_em1.tpr -f complex_cg_md.whole.xtc -o complex_cg_md.whole.nojump.xtc -n index.ndx -pbc nojump
+gmx trjconv -s complex_cg_em1.tpr -f complex_cg_md.whole.nojump.xtc -o complex_cg_md.whole.nojump.mol.xtc -n index.ndx -pbc mol -center
+```
+
 ## Data evaluation (day 3)
