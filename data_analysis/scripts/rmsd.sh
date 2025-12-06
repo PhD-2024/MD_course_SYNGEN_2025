@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Preprocessed trajectories (from preprocess.sh)
-traj_list=("npt_ber_posres" "npt_ber" "npt" "nvt")
+traj_list=("npt")
 
 # Groups for RMSD 
 groups=("DNA" "Backbone" "SideChain")

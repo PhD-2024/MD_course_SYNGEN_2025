@@ -6,38 +6,30 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def read_xvg_fast(file):
+def read_xvg_fast(filename):
     """
     Fast reader for 2-column XVG files.
-    Extracts subtitle → title → filename as label.
+    Extracts subtitle → title → filename as legend label.
     """
     title = None
     subtitle = None
 
-    # Read metadata lines at the top of the file
-    with open(file, "r") as f:
+    with open(filename, "r") as f:
         for line in f:
             if not line.startswith("@"):
                 break
-
-            # Title
+            if "subtitle" in line:
+                m = re.search(r'"(.+)"', line)
+                if m:
+                    subtitle = m.group(1)
             if "title" in line:
                 m = re.search(r'"(.+)"', line)
                 if m:
                     title = m.group(1)
 
-            # Subtitle
-            if "subtitle" in line:
-                m = re.search(r'"(.+)"', line)
-                if m:
-                    subtitle = m.group(1)
+    label = subtitle if subtitle else (title if title else filename)
 
-    # Priority for label
-    label = subtitle if subtitle else (title if title else file)
-
-    # Fast numeric read
-    data = np.loadtxt(file, comments=("@", "#"))
-
+    data = np.loadtxt(filename, comments=("@", "#"))
     x = data[:, 0]
     y = data[:, 1]
 
@@ -45,7 +37,7 @@ def read_xvg_fast(file):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Fast multi-XVG plotter with subtitle legend labels.")
+    parser = argparse.ArgumentParser(description="Fast multi-XVG plotter with optional formatting.")
     parser.add_argument("-i", "--input", required=True,
                         help="Input glob pattern, e.g. 'rmsd_*g1.xvg'")
     parser.add_argument("-o", "--output", default="plot.png",
@@ -53,42 +45,60 @@ def main():
     parser.add_argument("--stride", type=int, default=1,
                         help="Downsample by keeping every Nth point (default: 1)")
 
+    # Optional formatting
+    parser.add_argument("--xlabel", type=str, help="Override x-axis label")
+    parser.add_argument("--ylabel", type=str, help="Override y-axis label")
+    parser.add_argument("--yscale", type=str, choices=["linear", "log"],
+                        help="Y-axis scale (linear or log)")
+    parser.add_argument("--xlim", nargs=2, type=float,
+                        help="Set x-limits: --xlim xmin xmax")
+    parser.add_argument("--ylim", nargs=2, type=float,
+                        help="Set y-limits: --ylim ymin ymax")
+
     args = parser.parse_args()
 
-    # Find matching XVG files
     files = sorted(glob.glob(args.input))
     if not files:
         print(f"No files found for pattern: {args.input}")
         return
 
-    print(f"Found {len(files)} files:")
+    print(f"Plotting {len(files)} files:")
     for f in files:
-        print("   ", f)
+        print("  ", f)
 
-    # ----- Plotting -----
+    # ----- Plot -----
     plt.figure(figsize=(10, 6), dpi=200)
 
     for f in files:
         x, y, label = read_xvg_fast(f)
 
-        # Downsampling if needed
         if args.stride > 1:
             x = x[::args.stride]
             y = y[::args.stride]
 
         plt.plot(x, y, label=label, linewidth=1.5)
 
-    plt.xlabel("x")
-    plt.ylabel("y")
+    # Labels
+    plt.xlabel(args.xlabel if args.xlabel else "x")
+    plt.ylabel(args.ylabel if args.ylabel else "y")
     plt.title("Multi-XVG Plot")
+
+    # Axis limits
+    if args.xlim:
+        plt.xlim(args.xlim)
+    if args.ylim:
+        plt.ylim(args.ylim)
+
+    # Scale
+    if args.yscale:
+        plt.yscale(args.yscale)
+
+    plt.grid(alpha=0.3)
     plt.legend()
     plt.tight_layout()
 
-    # Save figure
     plt.savefig(args.output, dpi=300)
-    print(f"Saved plot to {args.output}")
-
-    plt.show()
+    print(f"Saved figure → {args.output}")
 
 
 if __name__ == "__main__":
