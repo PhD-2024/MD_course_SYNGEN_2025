@@ -23,7 +23,6 @@ def parse_xvg_metadata(filename):
                 elif "yaxis" in line and "label" in line:
                     ylabel = line.split('"')[1]
             elif not line.startswith(('#', '@')):
-                # First data line reached → stop parsing metadata
                 break
 
     return title, subtitle, xlabel, ylabel
@@ -43,7 +42,7 @@ def load_xvg_data(filename):
     return x, y
 
 
-def plot_xvg(filename):
+def plot_xvg(filename, args):
     """Read, plot, and save XVG as JPEG."""
     title, subtitle, xlabel, ylabel = parse_xvg_metadata(filename)
     x, y = load_xvg_data(filename)
@@ -51,13 +50,27 @@ def plot_xvg(filename):
     plt.figure(figsize=(7, 5))
     plt.plot(x, y, linewidth=1.5)
 
+    # Title
     plt.title(f"{title}\n{subtitle}" if subtitle else title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+
+    # Labels (override if provided)
+    plt.xlabel(args.xlabel if args.xlabel else xlabel)
+    plt.ylabel(args.ylabel if args.ylabel else ylabel)
+
+    # Axis limits
+    if args.xlim:
+        plt.xlim(args.xlim)
+    if args.ylim:
+        plt.ylim(args.ylim)
+
+    # Y-scale (linear/log)
+    if args.yscale:
+        plt.yscale(args.yscale)
+
     plt.grid(True, alpha=0.3)
+    plt.tight_layout()
 
     outname = os.path.splitext(filename)[0] + ".jpg"
-    plt.tight_layout()
     plt.savefig(outname, dpi=300)
     plt.close()
 
@@ -65,12 +78,21 @@ def plot_xvg(filename):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot XVG files as JPEG")
-    parser.add_argument(
-        "-i", "--input", required=True, 
-        help="Input XVG glob pattern, e.g. 'rmsd*.xvg'"
-    )
+    parser = argparse.ArgumentParser(description="Plot XVG files as JPEG with optional formatting.")
+    parser.add_argument("-i", "--input", required=True,
+                        help="Input XVG glob pattern, e.g. 'rmsd*.xvg'")
     
+    parser.add_argument("--xlim", nargs=2, type=float,
+                        help="Set x-axis limits: --xlim xmin xmax")
+    parser.add_argument("--ylim", nargs=2, type=float,
+                        help="Set y-axis limits: --ylim ymin ymax")
+    parser.add_argument("--xlabel", type=str,
+                        help="Override x-axis label")
+    parser.add_argument("--ylabel", type=str,
+                        help="Override y-axis label")
+    parser.add_argument("--yscale", type=str, choices=["linear", "log"],
+                        help="Set y-axis scale (linear or log)")
+
     args = parser.parse_args()
     files = sorted(glob.glob(args.input))
 
@@ -79,7 +101,7 @@ def main():
         return
 
     for f in files:
-        plot_xvg(f)
+        plot_xvg(f, args)
 
 
 if __name__ == "__main__":
