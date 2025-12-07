@@ -680,9 +680,70 @@ todo check for correctness under is2364@int-nano:/shared/user_data/is2364/md_cou
 
 ## Data evaluation (day 3)
 
-### Trajectory Preprocessing: Removing Periodic Boundary Artifacts
+### **Energy Analysis: Pressure, Density, Total Energy**
 
-Before performing any structural analysis, all trajectories must be cleaned to remove distortions caused by periodic boundary conditions (PBC).
+During equilibration, the system should reach stable thermodynamic conditions.
+We extract **pressure**, **density**, and **total energy** from the `.edr` files to verify that each MD stage behaves physically and is properly equilibrated.
+
+To extract these quantities for one simulation (e.g., `eq.edr`):
+
+```bash
+gmx energy -f eq.edr -o eq_total_energy.xvg
+```
+Then you will see interactive window where you shold choose total energy.
+
+Students should perform this analysis for **one trajectory**.
+For convenience, a **extract_energies.sh is provided** to repeat this extraction for all `.edr` files automatically. Please adapt it if you have different file naming.
+
+You should check: 
+
+* density stabilizes after equilibration
+* total energy decreases and then forms a plateau
+
+
+Plots can be generated with the general-purpose script:
+
+```bash
+python3 plot_xvg.py -i '*xvg'
+```
+
+Or for better visualisaton: 
+
+```bash
+python3 plot_xvg.py -i '*dens*xvg' --ylim 950 1050 --ylabel "Density (kg/m^3)"
+```
+
+This gives a quick visual check that the system reached equilibrium before continuing with structural analysis.
+
+### **Radial Distribution Function (RDF): Ion–Water Structure**
+
+To characterize the local solvation structure around ions, we compute the radial distribution function (RDF) between **Na⁺ ions** and **water oxygen atoms**. For speed, we analyze only the first **1000 ps**, which is sufficient to obtain smooth statistics.
+
+Run RDF calculation:
+
+```bash
+gmx rdf -s npt.tpr -f npt.xtc -o rdf_ion_water.xvg -b 0 -e 1000
+```
+
+An interactive menu will appear; select **Na** as the reference group and **Water** (or SOL) as the second group.
+This produces an RDF curve showing how water is structured around ions.
+
+Students should identify:
+
+* the **first solvation shell** (first sharp RDF peak)
+* the **second solvation shell** (next broader peak)
+* the distance at which RDF approaches 1 (bulk-like behavior)
+
+Plots can be generated using the same script:
+
+```bash
+python3 plot_xvg.py -i 'rdf*xvg' --xlim 0 1.25
+```
+
+
+### Trajectory Preprocessing: Removing Periodic Boundaries
+
+Before performing any structural analysis, all trajectories must be cleaned to remove distortions caused by PBC.
 If this step is skipped, the resulting RMSD/RMSF/distance plots can be wrong, because molecules may appear:
 
 * split across the simulation box,
@@ -691,7 +752,6 @@ If this step is skipped, the resulting RMSD/RMSF/distance plots can be wrong, be
 
 * wrapped in different ways at different frames.
 
-This is not real motion — it’s a visualization and coordinate-storage artifact that must be fixed.
 
 **0. Make new topology**
 
@@ -735,21 +795,15 @@ We write out the first frame of the centered trajectory and rebuild a final, cle
 Using a `.tpr` instead of a `.gro` is preferred because it contains full topology and reference information needed for RMSD, RMSF, H-bond, and distance analyses.
 
 ---
-Total time of performing this:  
-
-real	7m54.079s  
-user	7m44.081s  
-sys	0m5.831s
-
-all traj  
-real	40m43.915s
-user	37m45.028s
-sys	0m26.345s
+Total time of performing this is **~35 minutes** so it maigh be better to add -b N -e M to make it faster.
 
 
 
 ```bash
-traj_list=("npt_ber_posres" "npt_ber" "npt" "nvt")
+#!/bin/bash
+
+# Trajectories to preprocess
+traj_list=("npt") # for all files ("npt_ber_posres" "npt_ber" "npt" "nvt")
 
 echo "=== Preprocessing trajectories (nojump → center + pbc mol, KEEPING WATER) ==="
 
@@ -760,17 +814,17 @@ for traj in "${traj_list[@]}"; do
     gro="${traj}.gro"
     echo "Processing $xtc"
 
-    # Step 1: Remove PBC jumps 
+    # Step 1: Remove PBC jumps (reconstruct molecules)
 
-    echo -e "17" | gmx trjconv -s "$tpr" -f "$xtc" -o "${traj}_nojump.xtc" -pbc nojump -b 0 -e 10000
-    echo -e "17" |  gmx trjconv -s "$tpr" -f "$xtc" -o "${traj}_nojump.gro" -pbc nojump -b 0 -e 0
-    # Step 2: New tpr
+    echo -e "non-Water" | gmx trjconv -s "$tpr" -f "$xtc" -o "${traj}_nojump.xtc" -pbc nojump # -b 0 -e 10000 # add this to make it faster
+    echo -e "non-Water" |  gmx trjconv -s "$tpr" -f "$xtc" -o "${traj}_nojump.gro" -pbc nojump -b 0 -e 0
+
     gmx grompp -f npt.mdp -c "${traj}_nojump.gro" -o "${traj}_nojump.tpr" -p full_system_ions_dry.top -maxwarn 1
-    # Step 3 and 4: Cluster the structure and put it in to the center
-    echo -e "0\n0" | gmx trjconv -s "${traj}_nojump.tpr" -f "${traj}_nojump.xtc" -o "${traj}_cluster.xtc" -pbc cluster
-    echo -e "1\n0" | gmx trjconv -s "${traj}_nojump.tpr" -f "${traj}_cluster.xtc" -o "${traj}_center.xtc" -center
-    # Step 5: generate new gro and tpr
-    echo -e "0\n0" | gmx trjconv -s "${traj}_nojump.tpr" -f "${traj}_center.xtc" -o "${traj}_center.gro" -b 0 -e 0
+
+    echo -e "System\nSystem" | gmx trjconv -s "${traj}_nojump.tpr" -f "${traj}_nojump.xtc" -o "${traj}_cluster.xtc" -pbc cluster
+    echo -e "DNA\nSystem" | gmx trjconv -s "${traj}_nojump.tpr" -f "${traj}_cluster.xtc" -o "${traj}_center.xtc" -center
+
+    echo -e "System\nSystem" | gmx trjconv -s "${traj}_nojump.tpr" -f "${traj}_center.xtc" -o "${traj}_center.gro" -b 0 -e 0
 
     gmx grompp -f npt.mdp -c "${traj}_center.gro" -o "${traj}_center.tpr" -p full_system_ions_dry.top -maxwarn 1
     echo "Clean (PBC-corrected) trajectory saved → ${traj}_nojump.xtc"
@@ -779,219 +833,142 @@ for traj in "${traj_list[@]}"; do
 done
 
 echo "Preprocessing completed."
-
 ```
 
----
-
-### RMSD Analysis of Protein–DNA System
-
-This section describes the analysis performed using the automated RMSD script, which computes the root-mean-square deviation (RMSD) for multiple structural groups across different simulation phases:
-
-- `nvt.xtc` — NVT equilibration with **position restraints**
-- `npt_ber_posres.xtc` — Berendsen barostat with **position restraints**
-- `npt_ber.xtc` — Berendsen barostat, restraints removed
-- `npt.xtc` — **Production** run using Parrinello–Rahman barostat (fully flexible)
-
-For each trajectory, RMSD is calculated for the following groups:
-
-- **1 – DNA**
-- **4 – Protein**
-- **6 – C-alpha atoms**
-- **7 – Protein backbone**
-
-Output files follow the format:
-
-`rmsd_<trajectory>_g<group>.xvg`
-
-Example:
-
-rmsd_npt_gDNA.xvg → Backbone RMSD during production
-rmsd_nvt_gProtein.xvg → DNA RMSD during NVT posres equilibration
-
-#### What RMSD Measures
-
-RMSD quantifies how much a structure deviates from the reference frame (the first frame in the trajectory
-or the supplied `.tpr` file). RMSD helps evaluate:
-
-- structural stability  
-- equilibration quality  
-- Protein conformational drift or unfolding  
-- DNA bending  
-- protein–DNA interaction stability
-
-![alt text](image-2.png)
-Demostration of different rmsd for different flexibilty. [RapidRMSD, INRIA Nanod Team. Accessed on 05.12.2025]
+Peform it and visualisate the result. Compare nojump, cluster and center structures. 
 
 ---
 
-#### **RMSD of the Protein Backbone**
+### **RMSD Analysis of Protein–DNA System**
 
-**Purpose:** Evaluate the global structural stability of the protein fold.
+RMSD quantifies how much a structure deviates from its reference conformation.
+It is used to assess whether the system reaches a stable configuration and how protein and DNA adapt during simulation.
+
+RMSD is computed for:
+
+* **DNA (Group 1)**
+* **Protein Backbone (Group 7)**
+* **Protein Side Chains (Group 11 or 12)**
+
+The automated script generates files following the pattern:
+
+```
+rmsd_<trajectory>_g<group>.xvg
+```
+
+These can be plotted with `plot_xvg.py` and `plot_multi_xvg.py`.
+
+---
+
+### **RMSD of the Protein Backbone**
+
+Backbone RMSD reflects the overall fold stability.
 
 **Expected behavior:**
-For a typical folded protein bound to DNA, backbone RMSD should rise slightly during equilibration and then stabilize in a compact range. Values around **0.2–0.4 nm (2–4 Å)** are characteristic of a well-behaved and structurally stable protein in MD simulations. Larger RMSD values may occur if the protein undergoes domain rearrangements or significant adaptation to DNA.
+
+* RMSD increases slightly after restraints are removed and then stabilizes.
+* Typical values for a folded protein bound to DNA are **0.2–0.4 nm (2–4 Å)**.
 
 **Interpretation:**
 
-* A stable plateau indicates proper equilibration and preservation of the folded state.
-* A slow drift may signal unfolding or the protein reshaping itself around the DNA interface.
-* Occasional spikes are normal and usually correspond to fluctuations in flexible loops rather than global instability.
+* A stable plateau → protein maintains its fold.
+* Slow drift → adaptation to DNA or unfolding.
+* Spikes → flexible loops, not global instability.
 
 ---
 
 ### **RMSD of Protein Side Chains**
 
-**Purpose:** Assess the mobility and rearrangement of protein side chains, especially those interacting with DNA.
+Side-chain RMSD captures local flexibility at the DNA interface.
 
 **Expected behavior:**
-Side-chain RMSD is normally higher than backbone RMSD because rotamers can change freely during simulation. After equilibration, typical values lie in the range **0.3–0.6 nm (3–6 Å)**, reflecting natural flexibility, interfacial breathing, and transient formation/breaking of contacts with DNA.
+
+* Higher than backbone RMSD due to rotamer changes.
+* Stable systems typically show **0.3–0.6 nm (3–6 Å)**.
 
 **Interpretation:**
 
-* Moderate fluctuations indicate healthy side-chain motion.
-* Increased RMSD near the binding interface may reflect formation or adjustment of hydrogen bonds or electrostatic contacts with DNA.
-* A consistent upward trend could imply significant rearrangement of the binding pocket.
-* Comparing side-chain RMSD with backbone RMSD helps distinguish **local flexibility** from **global structural changes**.
+* Moderate fluctuations → normal breathing motion.
+* Increased values → interfacial rearrangements or H-bond switching.
+* Upward drift → major reorganization.
 
 ---
 
 ### **RMSD of DNA**
 
-**Purpose:** 
-RMSD of DNA characterizes global helical stability and local breathing motions during equilibration and production. Under physiological conditions, stable duplex DNA typically shows RMSD values in the range **0.15–0.30 nm (1.5–3 Å)** once equilibrated.
+DNA RMSD reports global helical stability.
 
 **Expected behavior:**
 
-* DNA RMSD should rise during early relaxation and then form a stable plateau during production.
-* Small fluctuations are normal and reflect base-pair breathing, minor-groove width changes, and backbone flexibility.
+* Stable duplex DNA typically ranges **0.15–0.30 nm (1.5–3 Å)**.
+* Fluctuations reflect base-pair breathing and backbone motion.
 
 **Interpretation:**
 
-* Terminal nucleotides often deviate the most due to end fraying or increased flexibility.
-* Protein binding may introduce mild bending, groove compression, or asymmetric deformation that appears as RMSD variations.
-* Strand asymmetry in RMSD can indicate differential groove tightening or sequence-dependent flexibility.
+* Terminal regions often contribute disproportionately to RMSD because their motion (end fraying) shifts the overall duplex alignment.
+
+* Protein binding may introduce mild bending or groove compression, which appears as gradual RMSD changes rather than sharp spikes.
+
+* Asymmetric RMSD behavior between strands or between equivalent structural regions can indicate localized deformation or directional bending of the helix.
 
 ---
 
-#### Comparing RMSD Across Trajectories
+### **Example Bash Script for RMSD Calculation**
 
-| Trajectory | What You Should Expect |
-|-----------|-------------------------|
-| **npt_ber_posres.xtc** | Very low RMSD due to position restraints (reference relaxation only). |
-| **nvt.xtc** | Still restrained → RMSD low. |
-| **npt_ber.xtc** | Restraints removed → RMSD increases as molecules relax naturally. |
-| **npt.xtc** (production) | Fully physical ensemble → RMSD stabilizes, representing true dynamics. |
+RMSD can be computed with gmx rms command: 
 
-This progression is essential to confirm that the system is well-prepared for production MD.
+```
+gmx rms -s md.tpr -f md.xtc -o rmsd.xvg -tu ns
+```
 
+Do it for DNA and check the results.
 
-This script automatically computes RMSD for four different simulation phases and four structural groups.
-For each trajectory, it feeds the appropriate group numbers to `gmx rms` and generates RMSD curves without requiring any manual input.
-
-Total time of performing this:  
-
-real	0m7.475s  
-user	0m6.788s  
-sys	0m0.154s  
-
+Sciript for all the systems:
 
 ```
 #!/bin/bash
 
-# Preprocessed trajectories (from preprocess.sh)
-traj_list=("npt_ber_posres" "npt_ber" "npt" "nvt")
-
-# Groups for RMSD
+traj_list=("npt")
 groups=("DNA" "Backbone" "SideChain")
 
-echo "=== Running RMSD analysis on centered trajectories ==="
-
 for traj in "${traj_list[@]}"; do
-
     xtc="${traj}_center.xtc"
     tpr="${traj}_center.tpr"
 
-    echo "Processing RMSD for: ${xtc}"
-
     for g in "${groups[@]}"; do
-
         out="rmsd_${traj}_g${g}.xvg"
-
-        echo "  → RMSD group $g vs $g → $out"
-
-        echo -e "${g}\n${g}" | gmx rms \
-            -s "$tpr" \
-            -f "$xtc" \
-            -o "$out" \
-            -tu ns
-
+        echo -e "${g}\n${g}" | gmx rms -s "$tpr" -f "$xtc" -o "$out" -tu ns
     done
-
-    echo "Finished $traj"
-    echo "--------------------------------------------------------"
-
 done
-
-echo "All RMSD analyses completed!"
 ```
 
-For plotting you can use plot_xvg.py
+Time to run: a few seconds.
+
+Please adapt tou your file naming if it differs.
+
+---
+
+### **Plotting RMSD**
+
+Use:
 
 ```
-usage: plot_xvg.py [-h] -i INPUT
-
-Plot XVG files as JPEG
-
-arguments:
-  -h, --help            show this help message and exit
-  -i INPUT, --input INPUT
-                        Input XVG glob pattern, e.g. 'rmsd*.xvg'
+python plot_xvg.py -i "rmsd*.xvg"
 ```
 
-or 
+or the multi-plotter:
+
 ```
-sage: plot_multi_xvg.py [-h] -i INPUT [-o OUTPUT] [--stride STRIDE]
-
-Fast multi-XVG plotter with subtitle legend labels.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i INPUT, --input INPUT
-                        Input glob pattern, e.g. 'rmsd_*g1.xvg'
-  -o OUTPUT, --output OUTPUT
-                        Output image file name (default: plot.png)
-  --stride STRIDE       Downsample by keeping every Nth point (default: 1)
-
+python plot_multi_xvg.py -i "rmsd_*gDNA.xvg"
 ```
 
 ---
 
-#### Questions for Students
+### **Questions for Students**
 
-##### Protein Stability
-1. At what simulation step does the protein backbone reach a stable RMSD?
-2. Is the protein more stable in restrained or unrestrained phases?
-
-##### DNA Stability
-3. Does DNA RMSD stabilize during production?
-4. Are there signs of bending or terminal fraying?
-
-##### Comparative Interpretation
-5. Why is RMSD in `npt_ber_posres.xtc` and `nvt.xtc` artificially low but not zero?
-6. What structural adjustments happen when restraints are removed (`npt_ber.xtc`)?
-7. Does the production (`npt.xtc`) RMSD suggest a well-equilibrated system?
-
-##### Physical Meaning
-8. Could fluctuations reflect biological function?  
-    (e.g., binding-site breathing, DNA groove changes)
-
-
-
----
-
-Here is a **clean, polished Markdown section** describing **RMSF analysis of protein and DNA**, written in the same style as your RMSD explanation sections.
-This text is suitable for your tutorial and assumes students will compute RMSF values themselves later (so no spoilers).
+1. Do the RMSD differences indicate global conformational changes or only local fluctuations?
+2. Based on RMSD patterns, would you classify your protein–DNA complex as rigid, moderately flexible, or highly dynamic?
+    Justify your answer using numbers from your plots.
 
 ---
 
@@ -1000,7 +977,7 @@ This text is suitable for your tutorial and assumes students will compute RMSF v
 Root-mean-square fluctuation (RMSF) measures how much each residue deviates from its **average position** during the simulation.
 Unlike RMSD (a global metric), RMSF provides **local information** about which parts of the protein or DNA are flexible, rigid, or dynamically active.
 
-RMSF was computed with:
+RMSF can be computed with:
 
 ```bash
 echo -e "Protein" | gmx rmsf -s npt_center.tpr -f npt_center.xtc -o rmsf_protein.xvg -res
@@ -1018,8 +995,6 @@ optional arguments:
 ---
 
 ### **Protein RMSF**
-
-### **Purpose**
 
 Identify flexible loops, structured helices or strands, and dynamic interfacial residues involved in DNA binding.
 
@@ -1040,17 +1015,18 @@ A typical RMSF plot therefore highlights **where the protein moves**, not just h
 
 ---
 
-usage: plot_rmsf.py [-h] -i INPUT
-
 Plot RMSF XVG files as bar plots
+
+```
+plot_rmsf.py -i INPUT
+```
+
 
 #### Questions for Students
 
 1. Provide interpretation of DNA rmsf.
 2. Provide interpretation of Protein rmsf.
 
-Here is a **concise, clear, and well-structured** Markdown section for **distance analysis**, covering COM distance and minimum distance, including a note about artifacts before preprocessing.
-This fits perfectly into your tutorial and matches the style of your RMSD/RMSF sections.
 
 ---
 
@@ -1074,7 +1050,6 @@ Computed with:
 gmx distance -s npt_center.tpr -f npt_center.xtc -select 'com of group "Protein" plus com of group "DNA"' -oall com_protein_dna.xvg
 ```
 
-**Purpose:**
 Monitor the overall separation between protein and DNA as a function of time.
 
 **Expected behavior:**
@@ -1103,7 +1078,6 @@ echo -e "Protein\nDNA" | gmx mindist \
   -group -od mindist_protein_dna.xvg
 ```
 
-**Purpose:**
 Identify the closest approach between any atom of the protein and any atom of the DNA.
 
 **How to interpret:**
@@ -1116,17 +1090,9 @@ Minimum distance is highly sensitive to local geometry and often correlates with
 
 for plotting use `plot_xvg.py` from previous chapter.
 
-Com distances time:
+Com distances time to compute **~5 minutes**
 
-real	5m53.060s  
-user	4m27.111s  
-sys	0m4.323s  
-
-mindist time:
-
-real	4m0.891s  
-user	4m0.628s  
-sys	0m0.073s  
+Mindist time to compute **~4 minutes**
 
 ---
 
@@ -1141,11 +1107,7 @@ In this section, we evaluate both:
 
 Hydrogen bonds were computed using the following GROMACS command:
 
-Time for running:
-
-real	2m2.933s  
-user	69m22.370s  
-sys	0m32.987s  
+Time for running **~2 minutes**
 
 ```bash
 echo -e "4\n1" | gmx hbond \
@@ -1157,8 +1119,6 @@ echo -e "4\n1" | gmx hbond \
 
 Where:
 
-* **Group 4** = Protein
-* **Group 1** = DNA
 * `hb_protein_dna.xvg` contains the time series of the number of H-bonds
 * `hb_lifetime.xvg` contains the H-bond lifetime autocorrelation
 
