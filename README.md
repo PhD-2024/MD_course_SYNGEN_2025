@@ -44,6 +44,7 @@ Here is a quick overview over important bash commands
 | `grep string files`| searches for string in files| 
 | `man command`| opens the manual page for the command - RTFM (Read the very fine manual... |
 | `ssh user@machine` | connects to machine via ssh for your username "user" on the remote machine | 
+| `ssh-keygen -t ed25519 -a 1000` | Generate an Ed25519 public/private key pair (modern elliptic-curve). The -a option increases KDF rounds to harden a passphrase when encrypting the private key (effective only if you set a passphrase). |
 | `ssh-keygen -t rsa -b 4096` | Generate an RSA public/private key pair with a 4096-bit key. Use this to enable passwordless SSH authentication: keep the private key secure (e.g. `~/.ssh/id_rsa`) and copy the public key (e.g. `~/.ssh/id_rsa.pub`) to the remote host's `~/.ssh/authorized_keys`. Optionally leave the passphrase empty for non-interactive logins. |
 | `echo` | prints to stout: e.g. `echo foo bar`| 
 | `chmod` | Change file permissions (mode). Examples: `chmod 755 file` or `chmod +x script.sh` |
@@ -493,13 +494,19 @@ You submit scripts on a cluster using a queuing system. Here you will see a SLUR
 We will have a special queue for this course.
 
 **DO THIS FIRST: GENERATION OF A PUBLIC-PRIVATE KEY PAIR**
-For logging in to the cluster we will use ssh with an rsa public private key pair.
+For logging in to the cluster we will use ssh with a public private key pair.
 
 For this you should first generate a keypair (feel free to also give it a different name).
 
+```bash
+ssh-keygen -t ed25519 -a 1000
 ```
-ssh-keygen -t rsa -b 4096
-```
+
+Generates an Ed25519 SSH keypair. Ed25519 is a modern elliptic-curve signature algorithm: smaller keys, faster signing/verification, and strong security compared with RSA at similar strength. The -a 1000 flag increases the number of KDF (key‑derivation) rounds used to strengthen a passphrase when encrypting the private key, raising the computational cost for brute‑force attacks; it only has effect if you set a passphrase and uses the modern OpenSSH private‑key format. Note: options like -b are ignored for ed25519.
+
+
+
+
 
 You do not want to choose a password.
 
