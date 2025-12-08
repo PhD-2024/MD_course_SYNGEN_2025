@@ -15,7 +15,7 @@ if you get split over linewidths.
 ## DAY 1
 
 ### Linux/Bash introduction 
-<details><summary> </summary>
+<details open><summary> </summary>
 When working on a cluster there may not be a GUI. Also on your own
 machine it may be a lot more efficient to use a terminal.
 
@@ -154,7 +154,7 @@ you may somethimes need to change permissions. To do this you can use chmod to c
 
 ## Setting up a Simulation for the combined Protein-DNA system 1J46.pdb
 
-<details><summary>  </summary>
+<details open><summary>  </summary>
 An MD simulation in GROMACS will always need 3 things
   1) coordinates, which tell the program where is what (usually a `.gro` file)
   2) a "topology" (yes it is defined different in Maths...). This contains the actual forcefield that tells 
@@ -345,7 +345,7 @@ Now look at your system again using vmd.
 </details>
 
 #### Interlude some quick overview over VMD (VISUAL MOLECULAR DYNAMICS)
-<details><summary></summary>
+<details open><summary></summary>
  VMD is a molecular visualization program for displaying, animating, and analyzing large biomolecular systems using 3-D graphics and built-in scripting. VMD supports computers running MacOS X, Unix, or Windows, is distributed free of charge, and includes source code. (https://www.ks.uiuc.edu/Research/vmd/)
 
  While this is an extremely powerful program that can also be directly be used as a frontend for another MD software, we will only be using it for 
@@ -398,7 +398,7 @@ You can also use the `Coloring Method` to e.g. manually color selections, color 
 </details>
 
 #### Back to the system preparation
-<details><summary></summary>
+<details open><summary></summary>
 If your system looks fine, you can now go to prepare the actual simulation.
 
 However, there remains 1 more thing to modify: So far we have a strongly charged system, in pure water.
@@ -438,7 +438,7 @@ It should look similar to the following example:
 </details>
 
 #### The .mdp files
-<details><summary></summary>
+<details open><summary></summary>
 So far we have obtained 2 of the 3 required inputs. (Geometry and topology)
 We still need the (`.mdp`) actual instructions what GROMACS is supposed to do with those.
 
@@ -469,7 +469,7 @@ For analysis you may be given a finished system.
 </details>
 
 #### Connecting to another machine via ssh
-<details><summary></summary>
+<details open><summary></summary>
 
 Normally you are your user at your local machine. Now you want to run this on another one.
 
@@ -582,7 +582,7 @@ You can submit your script from the folder you want to run it by `sbatch runscri
 </details>
 
 ### Generating an index file 
-<details><summary></summary>
+<details open><summary></summary>
 
 Index files allow for a more in-depth selection for later analysis or other operations.
 
@@ -613,7 +613,7 @@ We will use such a ndx file to make our visualisation of the final trajectory ea
 
 ### Excursion: the .mdp file - Instructions for your GROMACS run
 
-<details><summary></summary>
+<details open><summary></summary>
 Like with most of the gromacs human-readable files, you can write comments with a ";" here.
 That also means it is simple to prepare a single `.mdp`file that contains your basic run instructions and modify it for your current runs.
 
@@ -682,7 +682,7 @@ More advanced options can (like everything) be found in the documentation. **A**
 
 ### Displaying multiple frames of the trajectory without diffusion
 
-<details><summary></summary>
+<details open><summary></summary>
 Select the DC basepairs and then use `gmx trjconv` with the option `-fit rot+trains` to obtain a trajectory where those groups are fitted on top of another (removing its diffusion and rotation.)
 This allows you to display multiple frames with vmd (change `now` to `startframe:endframe`) for a part of the trajectory and use a slight smoothing factor in the "Trajectory" section of the Graphical Representations window of vmd. This directly shows you how flexible different parts of your molecule are (if your fitted selection is rigid - e.g. a protein backbone.)
 
