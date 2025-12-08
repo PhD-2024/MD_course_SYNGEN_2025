@@ -51,6 +51,8 @@ Here is a quick overview over important bash commands
 | `chown` | Change file owner and group. Example: `chown user:group file` |
 | `sbatch jobscript` | Submits a SLURM jobscript. |
 | `squeue -u your_user_name --format="%14i %19P %30j %8u %2t %7M %5D %R" "$@" `| Displays your queued jobs| 
+| `xmgrace filename1 filename2 ...` | plots xvg files |
+| `xmgrace -nxy filename1 ` | plots xvg files  with mutliple y columns|
 
 1) (Bash) Scripts are essentially nothing essentially nothing more storing commands in a text file so you can reuse them (also great to have reproducability - no arbitray behavior due to typos-). You usually start them with the so called shebang `#!/bin/bash` which tells the computer with which interpreter to execute it - here bash. `#!/bin/python3`would be a python script for example. You can of course completely forgo it and manually call the `bash`command in the shell.
 
@@ -836,6 +838,7 @@ gmx trjconv -s complex_cg_em1.tpr -f complex_cg_md.whole.nojump.xtc -o complex_c
 ## Useful gmx commands
 
 In the following there are some useful gmx commands - You will not need all of them during the MD-course but some of them are useful for the future.
+
 Remember - using the manual you will get all important options for each of them.
 
 | Command | Description |
