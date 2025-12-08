@@ -53,6 +53,9 @@ Here is a quick overview over important bash commands
 | `squeue -u your_user_name --format="%14i %19P %30j %8u %2t %7M %5D %R" "$@" `| Displays your queued jobs| 
 | `xmgrace filename1 filename2 ...` | plots xvg files |
 | `xmgrace -nxy filename1 ` | plots xvg files  with mutliple y columns|
+| `nano filename`| opens filename with the commandline editor nano |
+| `vi filename`| opens filename with the commandline editor vi |
+| `vim filename`| opens filename with the commandline editor vim |
 
 1) (Bash) Scripts are essentially nothing essentially nothing more storing commands in a text file so you can reuse them (also great to have reproducability - no arbitray behavior due to typos-). You usually start them with the so called shebang `#!/bin/bash` which tells the computer with which interpreter to execute it - here bash. `#!/bin/python3`would be a python script for example. You can of course completely forgo it and manually call the `bash`command in the shell.
 
