@@ -831,3 +831,36 @@ gmx trjconv -s complex_cg_em1.tpr -f complex_cg_md.whole.nojump.xtc -o complex_c
 ```
 
 ## Data evaluation (day 3)
+
+
+## Useful gmx commands
+
+In the following there are some useful gmx commands - You will not need all of them during the MD-course but some of them are useful for the future.
+Remember - using the manual you will get all important options for each of them.
+
+| Command | Description |
+|---|---|
+| `gmx pdb2gmx` | Generate topology and processed structure files from a PDB. |
+| `gmx grompp` | Preprocess inputs and assemble a runnable .tpr file. |
+| `gmx mdrun` | Execute molecular dynamics or analysis using a .tpr file. |
+| `gmx energy` | Extract and print energy terms from an .edr file. |
+| `gmx trjconv` | Convert, center, fit, or filter trajectories and structure files. |
+| `gmx solvate` | Fill a simulation box with solvent molecules. |
+| `gmx insert-molecules` | Insert one or more molecules into a box at specified positions. |
+| `gmx genion` | Replace solvent molecules with ions to neutralize or set ionic strength. |
+| `gmx msd` | Compute mean squared displacement and diffusion coefficients. |
+| `gmx angle` | Calculate time series of angles (e.g., bond/dihedral angles). |
+| `gmx distance` | Measure distances between atoms or groups over a trajectory. |
+| `gmx mindist` | Compute minimum distances between groups and contact counts. |
+| `gmx pairdist` | Compute pairwise distances between atom/group selections. |
+| `gmx rdf` | Compute radial distribution functions (pair correlation). |
+| `gmx sasa` | Calculate solvent accessible surface area (per atom/group). |
+| `gmx analyze` | Perform generic analysis on time series (e.g., averages, errors). |
+| `gmx clustsize` | Compute cluster size distributions from clustering results. |
+| `gmx density` | Compute spatial density profiles (e.g., along an axis). |
+| `gmx dipoles` | Calculate dipole moments/time series for molecules/groups. |
+| `gmx dump` | Dump binary GROMACS files into a readable text representation. |
+| `gmx gyrate` | Compute radius of gyration over time for selections. |
+| `gmx hbond` | Analyze hydrogen bonds: counts, lifetimes, geometry. |
+| `gmx wham` | Perform Weighted Histogram Analysis Method for PMFs. |
+| `gmx bar` | Compute free-energy differences using the Bennett Acceptance Ratio. |
