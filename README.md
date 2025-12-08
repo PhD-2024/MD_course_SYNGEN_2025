@@ -13,8 +13,9 @@ if you get split over linewidths.
 
 
 ## DAY 1
-### Linux/Bash introduction 
 
+### Linux/Bash introduction 
+<details><summary> </summary>
 When working on a cluster there may not be a GUI. Also on your own
 machine it may be a lot more efficient to use a terminal.
 
@@ -149,9 +150,11 @@ you may somethimes need to change permissions. To do this you can use chmod to c
 | `rw-` (read & write) | 6 | `rw-` |
 | `rwx` (read, write & execute) | 7 | `rwx` |
 
+</details>
 
 ## Setting up a Simulation for the combined Protein-DNA system 1J46.pdb
 
+<details><summary>  </summary>
 An MD simulation in GROMACS will always need 3 things
   1) coordinates, which tell the program where is what (usually a `.gro` file)
   2) a "topology" (yes it is defined different in Maths...). This contains the actual forcefield that tells 
@@ -339,9 +342,10 @@ or in the command line via the `man` command. You can (and should!) always check
 
 Now look at your system again using vmd. 
 
+</details>
 
 #### Interlude some quick overview over VMD (VISUAL MOLECULAR DYNAMICS)
-
+<details><summary></summary>
  VMD is a molecular visualization program for displaying, animating, and analyzing large biomolecular systems using 3-D graphics and built-in scripting. VMD supports computers running MacOS X, Unix, or Windows, is distributed free of charge, and includes source code. (https://www.ks.uiuc.edu/Research/vmd/)
 
  While this is an extremely powerful program that can also be directly be used as a frontend for another MD software, we will only be using it for 
@@ -391,9 +395,10 @@ Your Drawing Method is still lines, you can change it in the Graphical Represent
 ![Example chaged Drawing Method 2](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-30-06.png>)
 
 You can also use the `Coloring Method` to e.g. manually color selections, color residues differently,...
+</details>
 
 #### Back to the system preparation
-
+<details><summary></summary>
 If your system looks fine, you can now go to prepare the actual simulation.
 
 However, there remains 1 more thing to modify: So far we have a strongly charged system, in pure water.
@@ -430,10 +435,10 @@ It should look similar to the following example:
 
 
 ![Example with ions](<files_afternoon_1/vmd_example_images/vmdscene.png>)
-
+</details>
 
 #### The .mdp files
-
+<details><summary></summary>
 So far we have obtained 2 of the 3 required inputs. (Geometry and topology)
 We still need the (`.mdp`) actual instructions what GROMACS is supposed to do with those.
 
@@ -461,8 +466,10 @@ For this we will now discuss how to run your systems on the cluster.
 
 Alternatively --
 For analysis you may be given a finished system.
+</details>
 
 #### Connecting to another machine via ssh
+<details><summary></summary>
 
 Normally you are your user at your local machine. Now you want to run this on another one.
 
@@ -571,7 +578,11 @@ which gmx
 ```
 
 You can submit your script from the folder you want to run it by `sbatch runscript.sh`
+
+</details>
+
 ### Generating an index file 
+<details><summary></summary>
 
 Index files allow for a more in-depth selection for later analysis or other operations.
 
@@ -598,9 +609,11 @@ indexS1 indexS2
 ```
 
 We will use such a ndx file to make our visualisation of the final trajectory easier on our eyes.
+</details>
 
 ### Excursion: the .mdp file - Instructions for your GROMACS run
 
+<details><summary></summary>
 Like with most of the gromacs human-readable files, you can write comments with a ";" here.
 That also means it is simple to prepare a single `.mdp`file that contains your basic run instructions and modify it for your current runs.
 
@@ -665,28 +678,29 @@ energygrps = System
 Those options are only for a very basic run. 
 More advanced options can (like everything) be found in the documentation. **A**lways remember **R**ead **T**he very **F**ine **M**anual (**RTFM**)
 
-
+</details>
 
 ### Displaying multiple frames of the trajectory without diffusion
 
+<details><summary></summary>
 Select the DC basepairs and then use `gmx trjconv` with the option `-fit rot+trains` to obtain a trajectory where those groups are fitted on top of another (removing its diffusion and rotation.)
 This allows you to display multiple frames with vmd (change `now` to `startframe:endframe`) for a part of the trajectory and use a slight smoothing factor in the "Trajectory" section of the Graphical Representations window of vmd. This directly shows you how flexible different parts of your molecule are (if your fitted selection is rigid - e.g. a protein backbone.)
 
 If your selection is broken over periodic boundary conditions during the trajectory, you should first center it into the box.
 This is also something that you can do with the `gmx trjconv` options. The simplest way for this is ususally `-pbc cluster` and `-center`.  
-
-
+</details>
+<!-- 
 ### NOTES TO Self 
 
 
 For assistants (will not be available to students) - all instructions for afternoon d1 can be automatically tested by running 
 `make_structure_for_gromacs.sh ` followed by `run_mds.sh`
 
-The students get the `.py`scripts, and the initial `.pdb` file to use but not the automated setup and mdruns. (They can type it themselves.)
-
+The students get the `.py`scripts, and the initial `.pdb` file to use but not the automated setup and mdruns. (They can type it themselves.) -->
+<!-- 
 ### full data 
 
-todo check for correctness under is2364@int-nano:/shared/user_data/is2364/md_course_example
+todo check for correctness under is2364@int-nano:/shared/user_data/is2364/md_course_example -->
 
 ## Course graining (day 2) 
 
