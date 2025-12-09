@@ -13,8 +13,9 @@ if you get split over linewidths.
 
 
 ## DAY 1
-### Linux/Bash introduction 
 
+### Linux/Bash introduction 
+<details open><summary> </summary>
 When working on a cluster there may not be a GUI. Also on your own
 machine it may be a lot more efficient to use a terminal.
 
@@ -44,12 +45,18 @@ Here is a quick overview over important bash commands
 | `grep string files`| searches for string in files| 
 | `man command`| opens the manual page for the command - RTFM (Read the very fine manual... |
 | `ssh user@machine` | connects to machine via ssh for your username "user" on the remote machine | 
+| `ssh-keygen -t ed25519 -a 1000` | Generate an Ed25519 public/private key pair (modern elliptic-curve). The -a option increases KDF rounds to harden a passphrase when encrypting the private key (effective only if you set a passphrase). |
 | `ssh-keygen -t rsa -b 4096` | Generate an RSA public/private key pair with a 4096-bit key. Use this to enable passwordless SSH authentication: keep the private key secure (e.g. `~/.ssh/id_rsa`) and copy the public key (e.g. `~/.ssh/id_rsa.pub`) to the remote host's `~/.ssh/authorized_keys`. Optionally leave the passphrase empty for non-interactive logins. |
 | `echo` | prints to stout: e.g. `echo foo bar`| 
 | `chmod` | Change file permissions (mode). Examples: `chmod 755 file` or `chmod +x script.sh` |
 | `chown` | Change file owner and group. Example: `chown user:group file` |
 | `sbatch jobscript` | Submits a SLURM jobscript. |
 | `squeue -u your_user_name --format="%14i %19P %30j %8u %2t %7M %5D %R" "$@" `| Displays your queued jobs| 
+| `xmgrace filename1 filename2 ...` | plots xvg files |
+| `xmgrace -nxy filename1 ` | plots xvg files  with mutliple y columns|
+| `nano filename`| opens filename with the commandline editor nano |
+| `vi filename`| opens filename with the commandline editor vi |
+| `vim filename`| opens filename with the commandline editor vim |
 
 1) (Bash) Scripts are essentially nothing essentially nothing more storing commands in a text file so you can reuse them (also great to have reproducability - no arbitray behavior due to typos-). You usually start them with the so called shebang `#!/bin/bash` which tells the computer with which interpreter to execute it - here bash. `#!/bin/python3`would be a python script for example. You can of course completely forgo it and manually call the `bash`command in the shell.
 
@@ -143,9 +150,11 @@ you may somethimes need to change permissions. To do this you can use chmod to c
 | `rw-` (read & write) | 6 | `rw-` |
 | `rwx` (read, write & execute) | 7 | `rwx` |
 
+</details>
 
 ## Setting up a Simulation for the combined Protein-DNA system 1J46.pdb
 
+<details open><summary>  </summary>
 An MD simulation in GROMACS will always need 3 things
   1) coordinates, which tell the program where is what (usually a `.gro` file)
   2) a "topology" (yes it is defined different in Maths...). This contains the actual forcefield that tells 
@@ -333,9 +342,10 @@ or in the command line via the `man` command. You can (and should!) always check
 
 Now look at your system again using vmd. 
 
+</details>
 
 #### Interlude some quick overview over VMD (VISUAL MOLECULAR DYNAMICS)
-
+<details open><summary></summary>
  VMD is a molecular visualization program for displaying, animating, and analyzing large biomolecular systems using 3-D graphics and built-in scripting. VMD supports computers running MacOS X, Unix, or Windows, is distributed free of charge, and includes source code. (https://www.ks.uiuc.edu/Research/vmd/)
 
  While this is an extremely powerful program that can also be directly be used as a frontend for another MD software, we will only be using it for 
@@ -385,9 +395,10 @@ Your Drawing Method is still lines, you can change it in the Graphical Represent
 ![Example chaged Drawing Method 2](<files_afternoon_1/vmd_example_images/Bildschirmfoto vom 2025-11-18 09-30-06.png>)
 
 You can also use the `Coloring Method` to e.g. manually color selections, color residues differently,...
+</details>
 
 #### Back to the system preparation
-
+<details open><summary></summary>
 If your system looks fine, you can now go to prepare the actual simulation.
 
 However, there remains 1 more thing to modify: So far we have a strongly charged system, in pure water.
@@ -424,10 +435,10 @@ It should look similar to the following example:
 
 
 ![Example with ions](<files_afternoon_1/vmd_example_images/vmdscene.png>)
-
+</details>
 
 #### The .mdp files
-
+<details open><summary></summary>
 So far we have obtained 2 of the 3 required inputs. (Geometry and topology)
 We still need the (`.mdp`) actual instructions what GROMACS is supposed to do with those.
 
@@ -455,8 +466,10 @@ For this we will now discuss how to run your systems on the cluster.
 
 Alternatively --
 For analysis you may be given a finished system.
+</details>
 
 #### Connecting to another machine via ssh
+<details open><summary></summary>
 
 Normally you are your user at your local machine. Now you want to run this on another one.
 
@@ -493,13 +506,19 @@ You submit scripts on a cluster using a queuing system. Here you will see a SLUR
 We will have a special queue for this course.
 
 **DO THIS FIRST: GENERATION OF A PUBLIC-PRIVATE KEY PAIR**
-For logging in to the cluster we will use ssh with an rsa public private key pair.
+For logging in to the cluster we will use ssh with a public private key pair.
 
 For this you should first generate a keypair (feel free to also give it a different name).
 
+```bash
+ssh-keygen -t ed25519 -a 1000
 ```
-ssh-keygen -t rsa -b 4096
-```
+
+Generates an Ed25519 SSH keypair. Ed25519 is a modern elliptic-curve signature algorithm: smaller keys, faster signing/verification, and strong security compared with RSA at similar strength. The -a 1000 flag increases the number of KDF (key‑derivation) rounds used to strengthen a passphrase when encrypting the private key, raising the computational cost for brute‑force attacks; it only has effect if you set a passphrase and uses the modern OpenSSH private‑key format. Note: options like -b are ignored for ed25519.
+
+
+
+
 
 You do not want to choose a password.
 
@@ -559,7 +578,11 @@ which gmx
 ```
 
 You can submit your script from the folder you want to run it by `sbatch runscript.sh`
+
+</details>
+
 ### Generating an index file 
+<details open><summary></summary>
 
 Index files allow for a more in-depth selection for later analysis or other operations.
 
@@ -586,9 +609,11 @@ indexS1 indexS2
 ```
 
 We will use such a ndx file to make our visualisation of the final trajectory easier on our eyes.
+</details>
 
 ### Excursion: the .mdp file - Instructions for your GROMACS run
 
+<details open><summary></summary>
 Like with most of the gromacs human-readable files, you can write comments with a ";" here.
 That also means it is simple to prepare a single `.mdp`file that contains your basic run instructions and modify it for your current runs.
 
@@ -653,30 +678,176 @@ energygrps = System
 Those options are only for a very basic run. 
 More advanced options can (like everything) be found in the documentation. **A**lways remember **R**ead **T**he very **F**ine **M**anual (**RTFM**)
 
-
+</details>
 
 ### Displaying multiple frames of the trajectory without diffusion
 
+<details open><summary></summary>
 Select the DC basepairs and then use `gmx trjconv` with the option `-fit rot+trains` to obtain a trajectory where those groups are fitted on top of another (removing its diffusion and rotation.)
 This allows you to display multiple frames with vmd (change `now` to `startframe:endframe`) for a part of the trajectory and use a slight smoothing factor in the "Trajectory" section of the Graphical Representations window of vmd. This directly shows you how flexible different parts of your molecule are (if your fitted selection is rigid - e.g. a protein backbone.)
 
 If your selection is broken over periodic boundary conditions during the trajectory, you should first center it into the box.
 This is also something that you can do with the `gmx trjconv` options. The simplest way for this is ususally `-pbc cluster` and `-center`.  
-
-
+</details>
+<!-- 
 ### NOTES TO Self 
 
 
 For assistants (will not be available to students) - all instructions for afternoon d1 can be automatically tested by running 
 `make_structure_for_gromacs.sh ` followed by `run_mds.sh`
 
-The students get the `.py`scripts, and the initial `.pdb` file to use but not the automated setup and mdruns. (They can type it themselves.)
-
+The students get the `.py`scripts, and the initial `.pdb` file to use but not the automated setup and mdruns. (They can type it themselves.) -->
+<!-- 
 ### full data 
 
-todo check for correctness under is2364@int-nano:/shared/user_data/is2364/md_course_example
+todo check for correctness under is2364@int-nano:/shared/user_data/is2364/md_course_example -->
 
 ## Course graining (day 2) 
+
+Tutorials on coarse-grained (CG) modelling of biomolecular system
+
+You will find the required `sirah_x2.2_20-07.ff` under files_afternoon_2.
+
+Notes: 
+1) Files `residuetypes.dat` and `specbond.dat` are essential for the correct definition of molecular
+groups and auto-detection of disulfide bonds and cyclic DNA polymers.
+
+2) The mapping to CG requires the correct protonation state of each residue at a given pH. We recommend using the PDB2PQR server (https://server.poissonboltzmann.org/pdb2pqr) and choosing the output naming scheme of AMBER for best compatibility.
+For the course you can use the previous `pdb`-Structure from afternoon_1.
+
+First you should either create a topology referring to your ff file (like on day 1) - alternatively you can create symbolic links to the ff folder in the following way.
+```
+ln -s ../sirah_x2.2_20-07.ff sirah.ff
+```
+This command creates a symbolic link named `sirah.ff` in the current directory that points to the directory where you put your ff folder e.g. `../sirah_x2.2_20-07.ff`. Using a symlink lets tools and scripts refer to the force-field folder by a stable name (`sirah.ff`) while keeping the actual files in a shared or versioned location. 
+
+Notes:
+
+- The link uses a relative path, so moving or renaming either the target directory or the folder containing the link will break it. Use `readlink -f sirah.ff` or `ls -l sirah.ff` to inspect where it points.
+- To remove the link, use `rm sirah.ff` (this removes only the link, not the target files).
+- Ensure the target directory contains the expected force-field files and that you have appropriate read permissions. Some GROMACS tools and scripts expect a folder with the exact name `sirah.ff`, so the symlink simplifies compatibility.
+
+Do the same for 
+```
+ln -s sirah.ff/residuetypes.dat
+ln -s sirah.ff/specbond.dat
+```
+
+### Build CG represnetation
+```
+TODO INSERT FIG HERE
+```
+
+```
+./sirah.ff/tools/CGCONV/cgconv.pl -i complex.pdb -o complex_cg.pdb
+```
+Note: Merging both DNA chains is convenient when planning to apply restraints between them.
+run pdb2gmx again (e.g.)
+
+```
+gmx pdb2gmx -f complex_cg.pdb -o complex_cg.gro
+
+```
+Note: During long simulations of DNA, capping residues may eventually separate. If you want to avoid this effect, which is called helix fraying, add Watson-Crick (WC) restraints at terminal base pairs. Merging both DNA chains is convenient when planning to apply restraints between them. Use `topol_DNA2.itp` file to edit.
+
+
+TODO INSERT NEXT FIG HERE
+
+### Create and solvate the system 
+
+Define the simulation box of the system
+```
+gmx editconf -f complex_cg.gro -o complex_cg_box.gro -bt octahedron -d 2.0 -c
+```
+Add WT4 molecules
+```
+gmx solvate -cp complex_cg_box.gro -cs sirah.ff/wt416.gro -o complex_cg_sol1.gro
+```
+
+Note: Edit topol.top to add number of WT4 molecules. Use grep -c WP1 1CRN_cg_sol1.gro to know number. Alternatively add the `.top` file to the options of gmx solvate - see day 1.
+
+### Remove WT4 molecules within 0.3 nm of protein
+ ```
+echo q | gmx make_ndx -f complex_cg_sol1.gro -o complex_cg_sol1.ndx
+
+gmx grompp -f sirah.ff/tutorial/3/GPU/em1_CGPROT.mdp -p topol.top -po delete1.mdp -c complex_cg_sol1.gro -o complex_cg_sol1.tpr -maxwarn 1
+
+gmx select -f complex_cg_sol1.gro -s complex_cg_sol1.tpr -n complex_cg_sol1.ndx -on rm_close_wt4.ndx -select 'not (same residue as (resname WT4 and within 0.3 of group Protein))
+
+gmx editconf -f complex_cg_sol1.gro -o complex_cg_sol2.gro -n rm_close_wt4.ndx
+```
+
+Note: Edit topol.top again to modify WT4 number.
+### Add CG counterions and 0.15M NaCl
+```
+gmx grompp -f sirah.ff/tutorial/3/GPU/em1_CGPROT.mdp -p topol.top -po delete2.mdp -c complex_cg_sol2.gro -o complex_cg_sol2.tpr -maxwarn 1
+gmx genion -s complex_cg_sol2.tpr -o complex_cg_ion.gro -np 67 -pname NaW -nn 55 -nname ClW
+```
+When prompted, choose to substitute WT4 molecules by ions and edit the
+[ molecules ] section in topol.top to include the CG ions and the correct number of WT4.
+
+### Visualize the system
+```
+./sirah.ff/tools/g_top2psf.pl -i topol.top -o complex_cg_ion.psf
+
+vmd complex_cg_ion.psf complex_cg_ion.gro -e sirah.ff/tools/sirah_vmdtk.tcl
+```
+Create an index file including a group for the backbone GN and GO beads
+
+```
+echo -e "a GN GO\n\nq" | gmx make_ndx -f complex_cg_ion.gro -o complex_cg_ion.ndx
+```
+Generate restraint files for the backbone GN and GO beads.
+```
+gmx genrestr -f complex_cg.gro -n complex_cg_ion.ndx -o bkbres.itp
+
+gmx genrestr -f complex_cg.gro -n complex_cg_ion.ndx -o bkbres_soft.itp -fc 100 100 100
+```
+
+Add the restraint topol_Protein.itp.
+### Run the simulation
+**Energy Minimization of side chains** by restraining the backbone*
+```
+gmx grompp -f em1_CGPROT.mdp -p ../topol.top -po em1.mdp -n ../complex_cg_ion.ndx -c ../complex_cg_ion.gro -r ../complex_cg_ion.gro -o complex_cg_em1.tpr
+gmx mdrun -deffnm complex_cg_em1 -v 
+```
+
+**Energy Minimization** of the whole system
+```
+gmx grompp -f em2_CGPROT.mdp -p ../topol.top -po em2.mdp -n ../complex_cg_ion.ndx -c complex_cg_em1.gro -o complex_cg_em2.tpr
+gmx mdrun -deffnm complex_cg_em2 -v 
+```
+
+Make new index group for Protein and DNA. 
+```
+gmx make_ndx -f ../complex_cg_ion.gro -n ../complex_cg_ion.ndx -o index.ndx
+```
+
+**Solvent equilibration**  (wall time 242 s, ntmpi 4 ntomp 4)
+```
+gmx grompp -f eq1_CGPROT.mdp -p ../topol.top -po eq1.mdp -n index.ndx -c complex_cg_em2.gro -r complex_cg_em2.gro -o complex_cg_eq1.tpr
+gmx mdrun -deffnm complex_cg_eq1 -v 
+```
+
+**Soft equilibration to improve side chain solvation** (wall time 1203 s, ntmpi 4 ntomp 4, total 25ns run)
+```
+gmx grompp -f eq2_CGPROT.mdp -p ../topol.top -po eq2.mdp -n index.ndx -c complex_cg_eq1.gro -r complex_cg_eq1.gro -o complex_cg_eq2.tpr
+gmx mdrun -deffnm complex_cg_eq2 -v 
+```
+**Production run**
+```
+gmx grompp -f md_CGPROT.mdp -p ../topol.top -po md.mdp -n index.ndx -c complex_cg_eq2.gro -o complex_cg_md.tpr
+gmx mdrun -deffnm complex_cg_md -v (wall time 505 s, ntmpi 4 ntomp 4, total 10ns run)
+```
+
+**Visualizing the simulation**
+
+Make sure the moleucles are not broken across pbc. It may be good to center the system and or to fit backbones on top of one another. 
+```
+gmx trjconv -s complex_cg_em1.tpr -f complex_cg_md.xtc -o complex_cg_md.whole.xtc -n index.ndx -pbc whole
+gmx trjconv -s complex_cg_em1.tpr -f complex_cg_md.whole.xtc -o complex_cg_md.whole.nojump.xtc -n index.ndx -pbc nojump
+gmx trjconv -s complex_cg_em1.tpr -f complex_cg_md.whole.nojump.xtc -o complex_cg_md.whole.nojump.mol.xtc -n index.ndx -pbc mol -center
+```
 
 ## Data evaluation (day 3)
 
@@ -1199,3 +1370,36 @@ Although students will generate their own results, typical expectations are:
 This reflects the dynamic but stable nature of biomolecular recognition.
 
 
+
+## Useful gmx commands
+
+In the following there are some useful gmx commands - You will not need all of them during the MD-course but some of them are useful for the future.
+
+Remember - using the manual you will get all important options for each of them.
+
+| Command | Description |
+|---|---|
+| `gmx pdb2gmx` | Generate topology and processed structure files from a PDB. |
+| `gmx grompp` | Preprocess inputs and assemble a runnable .tpr file. |
+| `gmx mdrun` | Execute molecular dynamics or analysis using a .tpr file. |
+| `gmx energy` | Extract and print energy terms from an .edr file. |
+| `gmx trjconv` | Convert, center, fit, or filter trajectories and structure files. |
+| `gmx solvate` | Fill a simulation box with solvent molecules. |
+| `gmx insert-molecules` | Insert one or more molecules into a box at specified positions. |
+| `gmx genion` | Replace solvent molecules with ions to neutralize or set ionic strength. |
+| `gmx msd` | Compute mean squared displacement and diffusion coefficients. |
+| `gmx angle` | Calculate time series of angles (e.g., bond/dihedral angles). |
+| `gmx distance` | Measure distances between atoms or groups over a trajectory. |
+| `gmx mindist` | Compute minimum distances between groups and contact counts. |
+| `gmx pairdist` | Compute pairwise distances between atom/group selections. |
+| `gmx rdf` | Compute radial distribution functions (pair correlation). |
+| `gmx sasa` | Calculate solvent accessible surface area (per atom/group). |
+| `gmx analyze` | Perform generic analysis on time series (e.g., averages, errors). |
+| `gmx clustsize` | Compute cluster size distributions from clustering results. |
+| `gmx density` | Compute spatial density profiles (e.g., along an axis). |
+| `gmx dipoles` | Calculate dipole moments/time series for molecules/groups. |
+| `gmx dump` | Dump binary GROMACS files into a readable text representation. |
+| `gmx gyrate` | Compute radius of gyration over time for selections. |
+| `gmx hbond` | Analyze hydrogen bonds: counts, lifetimes, geometry. |
+| `gmx wham` | Perform Weighted Histogram Analysis Method for PMFs. |
+| `gmx bar` | Compute free-energy differences using the Bennett Acceptance Ratio. |
