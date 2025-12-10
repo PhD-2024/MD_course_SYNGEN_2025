@@ -5035,7 +5035,7 @@ def main(options):
         # XXX Specify a better, version specific base-itp name.
         # Do not set a define for position restrains here, as people are more used to do it in mdp file?
         top.write(
-'''#include "martini.itp"
+'''#include "martini_v2.1-dna.itp"
     
 %s
   

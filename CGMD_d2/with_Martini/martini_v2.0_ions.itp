@@ -10,7 +10,7 @@
 
 [moleculetype]
 ; molname 	nrexcl
-  NA+  		1
+  NA  		1
 
 [atoms]
 ;id 	type 	resnr 	residu 	atom 	cgnr 	charge
@@ -21,7 +21,7 @@
 
 [moleculetype]
 ; molname 	nrexcl
-  CL-  		1
+  CL  		1
 
 [atoms]
 ;id 	type 	resnr 	residu 	atom 	cgnr 	charge
