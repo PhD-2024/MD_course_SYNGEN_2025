@@ -1,3 +1,7 @@
-files_afternoon_1/part_*.pdb
-files_afternoon_1/mdout.mdp
-files/*
+AAMD_d1/*top
+AAMD_d1/*gro
+AAMD_d1/*
+AAMD_d1/*_part/*
+AAMD_d1/helix_part/
+AAMD_d1/protein_part/
+vmdscene.tga
