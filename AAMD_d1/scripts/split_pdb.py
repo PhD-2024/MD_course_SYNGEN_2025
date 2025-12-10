@@ -1,5 +1,5 @@
 ''' this splits pdb into individual files '''
-filename="files_afternoon_1/1J46.pdb"
+filename="../1J46.pdb"
 with open(filename) as f:
     output_dict={}
     dump=[]
