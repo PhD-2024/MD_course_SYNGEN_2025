@@ -6,10 +6,13 @@
 \usepackage{fontspec}
 \usepackage{microtype}
 
-% Make images auto-fit the text width while preserving aspect ratio
+% Make images use their natural size but never exceed 60% of the text width; preserve aspect ratio
 \usepackage{graphicx}
 \usepackage{adjustbox}
-\AtBeginDocument{\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>0.6\linewidth 0.6\linewidth \else \Gin@nat@width \fi}
+\makeatother
+\AtBeginDocument{\setkeys{Gin}{width=\maxwidth,keepaspectratio}}
 
 % Allow breaking long lines in verbatim/code blocks
 \usepackage{fvextra}
