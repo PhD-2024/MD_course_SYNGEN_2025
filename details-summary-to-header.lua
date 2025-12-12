@@ -70,6 +70,11 @@ function Pandoc(doc)
 
   while i <= #doc.blocks do
     local b = doc.blocks[i]
+    -- If rendering to LaTeX/PDF, insert a page break before top-level sections (Header level 2)
+    if FORMAT and tostring(FORMAT):match('latex') and b and b.t == 'Header' and b.level == 2 then
+      table.insert(out_blocks, pandoc.RawBlock('latex', '\\clearpage'))
+      safe_write('[details-debug] inserted \\clearpage before level-2 header\n')
+    end
     if b.t == 'RawBlock' and b.format == 'html' and b.text:match('^%s*<details') then
       if h_idx <= #headings then
         local title = headings[h_idx]
