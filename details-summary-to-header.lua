@@ -25,7 +25,7 @@ end
 function Pandoc(doc)
   safe_write('[details-debug] filter start\n')
 
-  local path = '/home_w/dullinger/md_course_december_2025/MD_course/README.md'
+  local path = '/home_w/dullinger/md_course_december_2025/MD_course/MD_course_SYNGEN_2025/README.md'
   local f = io.open(path, 'r')
   local src = nil
   if f then
