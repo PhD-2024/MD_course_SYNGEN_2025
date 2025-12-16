@@ -299,6 +299,8 @@ cd $SCRATCH
 
 #copy what you need back to the directory you want
 rsync -a * ${target_working_dir}
+#remove your stuff again
+ls *.xtc | xargs rm
 ```
 
 You can submit your script from the folder you want to run it by `sbatch runscript.sh`
