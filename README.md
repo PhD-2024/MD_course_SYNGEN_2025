@@ -278,22 +278,27 @@ gmx mdrun -deffnm YOURFILENAME -gpu_id 0 -nt 8
 #SBATCH --cpus-per-task=1
 #SBATCH --threads-per-core=1
 #SBATCH --mem-per-cpu=500
-#SBATCH --partition=gpu                     #MODIFY THIS FOR THE COURSE QUEUE
+#SBATCH --partition=short                     #MODIFY THIS FOR THE COURSE QUEUE
 #SBATCH --mail-type=END                     # Send email at job completion
 #SBATCH --mail-user=yourmail@example.edu    # Email address for notifications
-#SBATCH --output=CURRENT_PATH/%j_out.log # Will save the stdout - modify this to your directory or leave out this line
-#SBATCH --error=CURRENT_PATH/%j_err.log  # Will save the stderr - modify this to your directory or leave out this line
 
 
+target_working_dir=$(pwd)
+echo ${target_working_dir}
 echo "Start Job $SLURM_ARRAY_TASK_ID on $HOSTNAME"  # Display job start information
-
+echo "working on the temporary dir /scratch/$USER/$SLURM_JOB_ID" 
+echo "$SCRATCH"
 #module load orca
 module load gromacs
 echo "using"
 which gmx
 
+cd $SCRATCH
 
 ############ PUT YOUR ACTUAL COMMANDS TO EXECUTE HERE
+
+#copy what you need back to the directory you want
+rsync -a * ${target_working_dir}
 ```
 
 You can submit your script from the folder you want to run it by `sbatch runscript.sh`
