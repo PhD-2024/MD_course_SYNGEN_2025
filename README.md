@@ -175,10 +175,10 @@ you may sometimes need to change permissions. To do this you can use chmod to ch
 Normally you are your user at your local machine. This will not be fast enough here in the computer room, so we will run the simulations on int-nano.
 Before you can do this you need either a password setup for your user or a public-private key pair. Instructions [here](#generation-of-a-public-private-key-pair). Do this first.
 
-You will connect to  the cluster using the username username by using
+You will connect to  the cluster using the username username by using ssh. If your key is not detected, you need to specify it with the -i option. The key for the course is under `your_home_dir/.ssh/id_syngen. For the -i option use the version without .pub. (You need your private key).
 
 ```
-ssh -Y username@clusteraddress.edu
+ssh -Y -i PATH_TO_YOUR_KEY username@clusteraddress.edu
 ```
 
 Make a new folder for this course and only operate within this. If you think need to remove/move stuff in this course consult your advisors. 
@@ -501,7 +501,9 @@ To obtain this this make a new file `system.top` (or however you want to call it
 To have the ff parameters you should start with the header from `./amber99bsc1.ff/forcefield.itp`.
 If you have it in a subfolder, then you should of course change the import to the corresponding subfolder of course.
 
-First use the pdb2gmx generated topologies and run `python3 top_to_itp.py --file old.itp > new.itp`.
+First use the pdb2gmx generated topologies (.top or .itp) and run `python3 top_to_itp.py --file old.top > new.itp`. (Of course use YOUR filenames instead of old and new...)
+
+
 The corresponding `new.itp` files have been cleaned of everything that is a top but not strictly a molecule-specific `.itp`
 In this file you want to import the corresponding itps generated previously. 
 
