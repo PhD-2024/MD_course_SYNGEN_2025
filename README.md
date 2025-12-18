@@ -292,19 +292,20 @@ echo ${target_working_dir}
 echo "Start Job $SLURM_ARRAY_TASK_ID on $HOSTNAME"  # Display job start information
 echo "working on the temporary dir /scratch/$USER/$SLURM_JOB_ID" 
 echo "$SCRATCH"
+
 #module load orca
 module load gromacs
 echo "using"
 which gmx
 
 cd $SCRATCH
-
+cp -r  ${target_working_dir}/* .
 ############ PUT YOUR ACTUAL COMMANDS TO EXECUTE HERE
 
 #copy what you need back to the directory you want
 rsync -a * ${target_working_dir}
 #remove your stuff again
-ls *.xtc | xargs rm
+ls .* | xargs rm -r
 ```
 
 You can submit your script from the folder you want to run it by `sbatch runscript.sh`
