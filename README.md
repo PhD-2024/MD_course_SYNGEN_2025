@@ -1036,16 +1036,20 @@ The structure now looks like this:
 
 ![modifywt4](<CGMD_d2/with_SIRAH/cg_simulation_file/vmdscene_complex.png>)
 
-Create an index file including a group for the backbone GN and GO beads
+Create an index file including a group for the backbone GN and GO beads for the protein.
+
+At first make a gro file consisting only protein part at first.
+
+Use your complex_cg.gro file to extract only the protein part and made the file protein_cg.gro . You can use simple vi to edit the file. The task is yours !
 
 ```
-echo -e "a GN GO\n\nq" | gmx make_ndx -f complex_cg_ion.gro -o complex_cg_ion.ndx
+echo -e "a GN GO\n\nq" | gmx make_ndx -f protein_cg.gro -o index.ndx
 ```
 Generate restraint files for the backbone GN and GO beads.
 ```
-gmx genrestr -f complex_cg.gro -n complex_cg_ion.ndx -o bkbres.itp
+gmx genrestr -f protein_cg.gro -n index.ndx -o bkbres.itp
 
-gmx genrestr -f complex_cg.gro -n complex_cg_ion.ndx -o bkbres_soft.itp -fc 100 100 100
+gmx genrestr -f protein_cg.gro -n index.ndx -o bkbres_soft.itp -fc 100 100 100
 ```
 
 Add the restraint topol_Protein.itp.
@@ -1059,6 +1063,9 @@ Add the restraint topol_Protein.itp.
 <details><summary>   <span role="heading" aria-level="3"><strong><big><big>Run the simulation</big></big></strong></span>
 </summary>
 
+Make separate folder "run" where we perform all the runs. Use "mkdir" command. And go to that folder.
+
+Copy all the required mdp files from folder "cg_simulation_file" and put inside the "run" folder. Use "scp" command.
 
 **Energy Minimization of side chains** by restraining the backbone*
 ```
