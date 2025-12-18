@@ -1079,7 +1079,7 @@ gmx grompp -f em2_CGPROT.mdp -p ../topol.top -po em2.mdp -n ../complex_cg_ion.nd
 gmx mdrun -deffnm complex_cg_em2 -v 
 ```
 
-Make new index group for Protein and DNA. 
+Make new index group for Protein and DNA as well as combining WT4, NaW and ClW. 
 ```
 gmx make_ndx -f ../complex_cg_ion.gro -n ../complex_cg_ion.ndx -o index.ndx
 ```
