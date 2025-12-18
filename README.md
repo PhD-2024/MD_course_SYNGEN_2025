@@ -207,8 +207,9 @@ rsync -a --progress --verbose --dry-run target destination
 if you need to specify a ssh key individually you can give it to the `-e` option:
 
 ```
-rsync -a --progress --verbose --dry-run  -e "ssh -i path_to/.ssh/somekey" target destination
-```ou submit scripts on a cluster using a queuing system. Here you will see a SLURM example.
+rsync -a --progress --verbose --dry-run  -e \"ssh -i path_to/.ssh/somekey\" target destination
+```
+You submit scripts on a cluster using a queuing system. Here you will see a SLURM example.
 We will have a special queue for this course.
 
 </details>
